@@ -262,6 +262,11 @@ def _eval_arg_extreme(args: List[TVal], params: dict) -> Verdict:
     return Verdict(Status.ADMIT, value=winners[0])
 
 
+def _eval_entity_equal(args: List[TVal], params: dict) -> Verdict:
+    a, b = args[0].value, args[1].value
+    return Verdict(Status.ADMIT, value=a == b)
+
+
 def _eval_aggregate(args: List[TVal], params: dict) -> Verdict:
     op = params.get("op")
     if op not in {"sum", "avg", "min", "max"}:
@@ -293,6 +298,7 @@ OPERATORS: Dict[str, OpSpec] = {
     "date_diff": OpSpec(2, ["date", "date"], _eval_date_diff),
     "arg_extreme": OpSpec(1, ["list_entity_number"], _eval_arg_extreme),
     "aggregate": OpSpec(1, ["list_number"], _eval_aggregate),
+    "entity_equal": OpSpec(2, ["entity", "entity"], _eval_entity_equal),
 }
 
 # What "result_type" each operator produces, for the final-step result-type check.
@@ -301,6 +307,7 @@ OPERATOR_RESULT_TYPE: Dict[str, str] = {
     "disjoin": "bool", "temporal_order": "bool", "set_membership": "bool",
     "transitive_chain": "relation", "arithmetic": "number", "date_diff": "number",
     "arg_extreme": "entity", "aggregate": "number",
+    "entity_equal": "bool",
 }
 
 

@@ -292,6 +292,52 @@ class TestOperatorSemantics(unittest.TestCase):
         self.assertTrue(v.value)
 
 
+class TestEntityEqual(unittest.TestCase):
+    def test_entity_equal_same_nationality(self):
+        """The motivating case from ANNOTATION_GUIDE.md: 'same nationality' questions
+        need an entity equality test between two resolved entity-typed values."""
+        g = Gate(ctx(p1="American American"))
+        v = g.step({"step_id": "s1", "operator": "entity_equal",
+                    "args": [span("p1", 0, 8), span("p1", 9, 17)]})
+        self.assertEqual(v.status, Status.ADMIT)
+        self.assertTrue(v.value)
+
+    def test_entity_equal_different_entities(self):
+        g = Gate(ctx(p1="American British"))
+        v = g.step({"step_id": "s1", "operator": "entity_equal",
+                    "args": [span("p1", 0, 8), span("p1", 9, 16)]})
+        self.assertEqual(v.status, Status.ADMIT)
+        self.assertFalse(v.value)
+
+    def test_entity_equal_from_prior_steps(self):
+        """Equality test where both entities come from prior admitted steps,
+        not raw spans -- the typical pipeline shape."""
+        g = Gate(ctx(p1="French French"))
+        g.step({"step_id": "s1", "operator": "entity_equal",
+                "args": [span("p1", 0, 6), span("p1", 7, 13)]})
+        # Use step refs via a chain: first admit two steps that produce entities
+        # (we use a direct injection for clean test isolation)
+        g2 = Gate(ctx(p1="x"))
+        import gate as _g
+        g2.admitted["s0a"] = (_g.TVal("entity", "French"), None)
+        g2.admitted["s0b"] = (_g.TVal("entity", "French"), None)
+        v = g2.step({"step_id": "s1", "operator": "entity_equal",
+                     "args": [stepref("s0a"), stepref("s0b")]})
+        self.assertEqual(v.status, Status.ADMIT)
+        self.assertTrue(v.value)
+
+    def test_entity_equal_adversarial_number_as_entity_rejected(self):
+        """Adversarial: trying to pass number-typed spans through entity_equal
+        should fail because the span text is coerced as entity (string), not number.
+        This tests that entity_equal uses string identity, not numeric comparison --
+        '042' != '42' as entities even though they're the same number."""
+        g = Gate(ctx(p1="042 42"))
+        v = g.step({"step_id": "s1", "operator": "entity_equal",
+                    "args": [span("p1", 0, 3), span("p1", 4, 6)]})
+        self.assertEqual(v.status, Status.ADMIT)
+        self.assertFalse(v.value)  # "042" != "42" as entity strings
+
+
 class TestRunTrace(unittest.TestCase):
     def test_full_chain_halts_on_rejection(self):
         """A 3-step trace where step 2 is malformed: the trace must halt there

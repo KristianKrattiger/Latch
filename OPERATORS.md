@@ -110,6 +110,28 @@ truth checker.
 - Justification: FinQA's multi-row table questions ("total revenue across three years")
   need aggregation over more than two values; `arithmetic` is binary only.
 
+### 12. `entity_equal`
+- Signature: `(a: Entity, b: Entity) -> Bool`
+- Justification: required for any "same nationality/birthplace/occupation" comparison
+  question — a real, documented gap found during the annotation guide's worked-example
+  exercise (see `ANNOTATION_GUIDE.md`'s "Comparison — near-miss" example). Without this
+  operator, questions like "Are X and Y of the same nationality?" are unexpressible even
+  though both entity values can be cleanly retrieved from context. `numeric_compare`'s
+  `eq` is typed to numbers only; this operator fills the entity-equality gap without
+  widening `numeric_compare`'s contract.
+- Preconditions: `a`, `b` resolve to entity-typed leaves.
+- Semantics: exact string equality after whitespace stripping (the gate's standard entity
+  coercion). This is deliberately strict — "USA" != "United States" — because the gate
+  is a type-checker, not a knowledge base. If the model retrieved two different surface
+  forms for the same real-world entity, the gate cannot and should not silently resolve
+  that; the model's job is to retrieve the canonical form from the context for both.
+- Abstain: never (total function over entity strings); REJECT on type mismatch.
+- Examples:
+  - `entity_equal("American", "American")` -> `True`
+  - `entity_equal("American", "British")` -> `False`
+  - `entity_equal("042", "42")` -> `False` (string identity, not numeric — "042" and "42"
+    are different entity strings even though they'd be the same number)
+
 ## Exclusions, argued explicitly
 
 **Bridge-entity resolution is not an operator.** It is the act of finding, in the context,

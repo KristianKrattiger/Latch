@@ -21,7 +21,7 @@ call is "k=1," not "k=3."
 1. Read the question and gold answer. Identify every fact the chain actually needs.
 2. For each fact: is it a direct span in the context (a retrieval leaf), or does it require
    combining two or more facts (needs an operator)?
-3. For each combination: does it match one of the 11 operators in `OPERATORS.md` exactly —
+3. For each combination: does it match one of the 13 operators in `OPERATORS.md` exactly —
    same arity, same kind of inputs? If yes, name it. If it's close but not quite (e.g., it
    needs an operator this set doesn't have), mark it a **near-miss** and name the missing
    operator. If it needs open-ended judgment (commonsense, unstated relation, subjective
@@ -38,15 +38,13 @@ Chain: bridge-retrieve release_date(Heaven Help Us) -> leaf A; bridge-retrieve
 release_date(Ghar Ki Rani) -> leaf B; `temporal_order(A, B, before)` -> answer. k=1.
 **Decomposable: yes.** Operator chain: `temporal_order`.
 
-**Comparison — near-miss, found during this exercise, not in `OPERATORS.md` v1.**
+**Comparison — now expressible (was a near-miss before `entity_equal` was added).**
 Q: "Are Frederick Joseph Kinsman and Cassius Gaius Foster of the same nationality?"
-Chain needs: bridge-retrieve nationality(A); bridge-retrieve nationality(B); then an
-**entity equality test** — and there is no such operator in v1. `numeric_compare`'s `eq`
-is typed to numbers only; nothing in the current set compares two entities for equality.
-**Decomposable: no.** Blocking reason code: `operator_gap:entity_equality`. This is the
-single most actionable finding from building this guide: adding a generic `entity_equal`
-(or widening `numeric_compare`'s `eq`/`neq` to accept entity-typed args) is the most
-obvious v1.1 addition if the full annotation pass turns up many of these — track the rate.
+Chain: bridge-retrieve nationality(A) -> leaf A; bridge-retrieve nationality(B) -> leaf B;
+`entity_equal(A, B)` -> answer. k=1.
+**Decomposable: yes.** Operator chain: `entity_equal`. (This was the single most
+actionable gap found during the original annotation exercise; see `OPERATORS.md` #12
+for the operator's full spec and its deliberately-strict string-equality semantics.)
 
 **Comparison — out of scope, genuinely open-ended.**
 Q: "Who has a wider scope of profession, Anne Castles or Colin Will?"
