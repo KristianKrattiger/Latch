@@ -34,7 +34,7 @@ time for it, per PREREG.md's time-boxed stage gates.
 ## What's actually been tested vs. what hasn't
 
 **Tested, with real passing tests, no model required:**
-- `gate.py` + `test_gate.py` — 43 unit tests, the mechanical gate itself.
+- `gate.py` + `test_gate.py` — 47 unit tests, the mechanical gate itself (13 operators).
 - `harness.py` + `test_harness_mock.py` — 17 unit tests, the model-calling scaffold,
   tested against a mock endpoint (malformed outputs, adversarial span mismatches, etc.).
 - `coverage_finqa.py` — run against the real FinQA test set (1,147 examples): 99.7%
@@ -61,13 +61,15 @@ time for it, per PREREG.md's time-boxed stage gates.
 | `CITATIONS.md` | Every citation used anywhere in this project, with a URL, a one-line description, and a verification status tag. |
 | `VERIFICATION.md` | The specific round-2 task of closing open citation questions from the red-team — overlaps with CITATIONS.md but keeps the original per-item verification writeups. |
 | `OPERATORS.md` | The closed operator set specification — the actual design document for what Latch can and cannot express. |
-| `gate.py` / `test_gate.py` | The reference mechanical gate, pure Python, 43 tests. |
+| `gate.py` / `test_gate.py` | The reference mechanical gate, pure Python, 47 tests (13 operators). |
 | `coverage_finqa.py` | FinQA gold-program coverage scanner; real run results in `data/`. |
 | `sample_2wiki.py` / `sample_2wiki.csv` / `.jsonl` | 2WikiMultihopQA sampler and its real output. |
 | `ANNOTATION_GUIDE.md` / `annotation_sheet.csv` | Manual decomposability-annotation protocol and template. |
 | `harness.py` / `prompts/` / `test_harness_mock.py` | Model-agnostic formalization harness + its tests. |
 | `failure_taxonomy.md` / `scoring_sheet.csv` | Manual trace-review categories and template. |
 | `PREREG.md` | Pre-registration: hypotheses, arms, stage gates, kill/promote criteria. |
+| `kappa.py` / `test_kappa.py` | Cohen's kappa calculator for the self re-annotation agreement check. |
+| `plot_risk_coverage.py` / `test_plot_risk_coverage.py` | Risk-coverage curve plotter per PREREG.md Section 5. |
 
 ## Running it
 
