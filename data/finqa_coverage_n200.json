@@ -1,0 +1,2133 @@
+{
+  "n": 200,
+  "expressible_count": 199,
+  "coverage_pct": 99.5,
+  "function_usage": {
+    "divide": 136,
+    "subtract": 98,
+    "add": 47,
+    "table_sum": 2,
+    "greater": 6,
+    "multiply": 18,
+    "table_average": 1,
+    "exp": 1,
+    "table_max": 1
+  },
+  "unsupported_functions": {
+    "exp": 1
+  },
+  "results": [
+    {
+      "id": "ABC/2005/page_49.pdf-4",
+      "question": "as of september 30 , 2005 , what percentage of employees that had received termination notices were actually terminated?",
+      "program": "divide(630, 700)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ETFC/2011/page_144.pdf-2",
+      "question": "as of december 31 , 2010 , what was the ratio of collateral pledged to the bank by its derivatives counterparties to overnight and other short-term borrowings",
+      "program": "divide(2.3, 0.5)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "DISH/2010/page_117.pdf-1",
+      "question": "what percentage of total minimum lease payments are due after 2015?",
+      "program": "divide(390239, 777443)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MRO/2013/page_19.pdf-4",
+      "question": "what percentage of net undeveloped acres expiring were located in the u.s in 2014?",
+      "program": "divide(145, 586)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AAL/2016/page_8.pdf-1",
+      "question": "what portion of the total full-time employees of mainline operations are pilots and flight crew instructors?",
+      "program": "divide(13400, 101500)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AMT/2014/page_160.pdf-1",
+      "question": "what is the percentage change in aggregate rent expense from 2013 to 2014?",
+      "program": "subtract(655.0, 495.2), divide(#0, 495.2)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "C/2008/page_44.pdf-2",
+      "question": "what was the percentage change in non-interest revenue from 2007 to 2008?",
+      "program": "subtract(438, -291), divide(#0, 291)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "LKQ/2016/page_87.pdf-3",
+      "question": "what was the cumulative rental expense from 2014 to 2016 in millions",
+      "program": "add(211.5, 168.4), add(148.5, #0)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MRO/2003/page_45.pdf-2",
+      "question": "what were total distillates sales in millions for the three year period ? 365 346 345",
+      "program": "table_sum(distillates, none)",
+      "expressible": true,
+      "functions_used": [
+        "table_sum"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GS/2014/page_51.pdf-1",
+      "question": "what is the percentage in total assets in 2014?",
+      "program": "subtract(856240, 911507), divide(#0, 911507)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ABMD/2005/page_29.pdf-2",
+      "question": "did compensation expense related to the company 2019s employee stock purchase plan grow from 2004 to 2005?",
+      "program": "greater(28000, 19000)",
+      "expressible": true,
+      "functions_used": [
+        "greater"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "HIG/2004/page_140.pdf-1",
+      "question": "in the adoption of the prospective method what was the ratio of the other comprehensive income to the net income reclassifying certain separate accounts to general account",
+      "program": "divide(294, 30)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "HWM/2018/page_96.pdf-2",
+      "question": "considering the average exercise price of options , what is the increase in the total value of stock options observed during 2016 and 2017 , in millions of dollars?",
+      "program": "multiply(11, 33.32), multiply(13, 26.93), subtract(#0, #1)",
+      "expressible": true,
+      "functions_used": [
+        "multiply",
+        "multiply",
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MRO/2004/page_125.pdf-2",
+      "question": "what was the 2004 rate of decrease in development costs?",
+      "program": "subtract(802, 711), divide(#0, 802)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "IP/2009/page_45.pdf-1",
+      "question": "what percentage of contractual obligations for future payments under existing debt and lease commitments and purchase obligations at december 31 , 2009 due in 2011 are maturities of long-term debt?",
+      "program": "divide(574, 1407)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GS/2012/page_121.pdf-2",
+      "question": "what is the percentage change in total financial liabilities at fair value in 2012?",
+      "program": "subtract(377677, 388669), divide(#0, 388669)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ETR/2004/page_239.pdf-3",
+      "question": "what is the growth rate in net revenue for entergy mississippi , inc . in 2003?",
+      "program": "subtract(426.6, 380.2), divide(#0, 380.2)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ILMN/2008/page_86.pdf-4",
+      "question": "what was the change in millions of company contributions to the employee benefit plans retirement plan between 2007 and 2008?",
+      "program": "subtract(2.6, 1.4)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GPN/2010/page_87.pdf-2",
+      "question": "what is the percentage change in the after-tax share-based compensation cost from 2009 to 2010?",
+      "program": "subtract(18.1, 6.3), subtract(14.6, 5.2), subtract(#0, #1), divide(#2, #1)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "subtract",
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AAL/2013/page_172.pdf-1",
+      "question": "what portion of the total bankruptcy settlement obligations are related to labor deemed claims?",
+      "program": "divide(849, 5424)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MRO/2013/page_39.pdf-3",
+      "question": "by what percentage did the average price of wti crude oil increase from 2011 to 2013?",
+      "program": "subtract(98.05, 95.11), divide(#0, 95.11)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "CME/2010/page_123.pdf-3",
+      "question": "what was the percent of the total number of securities to be issued upon exercise of outstanding options that was securities to be issued upon exercise of outstanding options",
+      "program": "divide(1211143, 1217121)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "JKHY/2019/page_18.pdf-3",
+      "question": "was the five year total return of the 2019 peer group greater than the 2018 peer group?",
+      "program": "greater(281.09, 286.22)",
+      "expressible": true,
+      "functions_used": [
+        "greater"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MMM/2007/page_84.pdf-1",
+      "question": "what is the ratio of the respirator mask/asbestos receivables to respirator mask/asbestos liabilities in 2007",
+      "program": "divide(332, 121)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ETR/2015/page_17.pdf-3",
+      "question": "what percentage of net revenue of 2015 is attributed to the growth from to retail electric price?",
+      "program": "divide(187, 5829)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "C/2018/page_175.pdf-1",
+      "question": "what was the percent change of the principal transactions revenue associated with interest rate risks from 2016 to 2017",
+      "program": "subtract(5301, 4229), divide(#0, 4229)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GS/2013/page_126.pdf-2",
+      "question": "what is the growth rate in total financial liabilities at fair value in 2013?",
+      "program": "subtract(355173, 377677), divide(#0, 377677)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "HUM/2009/page_105.pdf-1",
+      "question": "what was the percent of the change of the weighted-average fair value at grant date from 2008 to 2009",
+      "program": "subtract(14.24, 17.95), divide(#0, 17.95)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AWK/2012/page_117.pdf-3",
+      "question": "what was total change in unrecognized tax benefits in millions from january 1 2011 to december 31 2011?",
+      "program": "subtract(158578, 118314)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "LMT/2016/page_49.pdf-4",
+      "question": "what were average operating profit for mfc in millions between 2014 and 2016?",
+      "program": "table_average(operating profit, none)",
+      "expressible": true,
+      "functions_used": [
+        "table_average"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "JPM/2018/page_90.pdf-2",
+      "question": "considering the net interest income managed basis in 2017 , what is the amount of expenses associated with liabilities , in millions of dollars?",
+      "program": "subtract(2180592, 51410)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "RSG/2018/page_94.pdf-2",
+      "question": "as of december 312018 what was the percent of restricted cash and marketable securities dedicated to the support our insurance programs",
+      "program": "divide(78.6, 108.1)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AMT/2014/page_149.pdf-2",
+      "question": "what would 2014 contingent consideration be without the foreign currency translation adjustment , in millions?",
+      "program": "add(4934, 28524)",
+      "expressible": true,
+      "functions_used": [
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AAL/2013/page_172.pdf-3",
+      "question": "what is the percent of americans labor-related deemed claim as a part of the total claims and other bankruptcy settlement obligations as of december2013",
+      "program": "divide(849, 5424)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "TMUS/2017/page_29.pdf-4",
+      "question": "what is the ratio of the office space throughout the us to the office space for the corporate headquarters in bellevue",
+      "program": "divide(1700000, 900000)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "STT/2009/page_127.pdf-2",
+      "question": "by how much more is the net gains from sales of available-for-sale securities in 2009 compare to 2008?",
+      "program": "subtract(368, 68)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GS/2013/page_85.pdf-2",
+      "question": "as of december 2013 and december 2012 , what was the average fair value of the securities and certain overnight cash deposits included in gce , in billions?",
+      "program": "add(184.07, 174.62), divide(#0, const_2)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ABMD/2012/page_41.pdf-3",
+      "question": "what is the roi of an investment in abiomed inc from march 2007 to march 2010?",
+      "program": "subtract(75.55, 100), divide(#0, 100)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "INTC/2015/page_41.pdf-2",
+      "question": "what is the percent of the square foot in millions owned facilities in the us to the to owned facilities",
+      "program": "divide(30.7, 47.9)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MO/2014/page_62.pdf-1",
+      "question": "what is the percent change in earnings for basic and diluted eps from 2013 to 2014?",
+      "program": "subtract(5058, 4523), divide(#0, 4523)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "DG/2007/page_67.pdf-1",
+      "question": "what was the change in millions of impairment charges included in sg&a expense from 2006 to 2007",
+      "program": "subtract(0.2, 9.4)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "CMCSA/2015/page_112.pdf-3",
+      "question": "based on the review of the reconciliation of unrecognized tax benefits what was the change in 2014",
+      "program": "subtract(1171, 1701)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "FIS/2012/page_48.pdf-2",
+      "question": "what is the percentage change in the impact of euro from 2011 to 2012?",
+      "program": "subtract(27.1, 26.4), divide(#0, 26.4)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GIS/2018/page_110.pdf-1",
+      "question": "what is the total value of issued guarantees and comfort letters for consolidated subsidiaries and non-consolidated affiliates , ( in millions ) ?",
+      "program": "add(540.8, 167.3)",
+      "expressible": true,
+      "functions_used": [
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "CE/2009/page_65.pdf-2",
+      "question": "for the 2010 currency maturities , what would the value be without the euro maturities , in us$ millions?",
+      "program": "add(-677, 372)",
+      "expressible": true,
+      "functions_used": [
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AMT/2014/page_160.pdf-4",
+      "question": "was 2014 rent expense greater than 2015 operating lease expense?",
+      "program": "divide(574438, const_1000), greater(655.0, #0)",
+      "expressible": true,
+      "functions_used": [
+        "divide",
+        "greater"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "CDNS/2018/page_66.pdf-4",
+      "question": "what is the net effect of the cumulative effect adjustments , net of income tax effects , to beginning retained earnings for new accounting standards adopted by cadence on the retained earnings balance as adjusted for december 30 , 2017 , in thousands?",
+      "program": "subtract(426932, 341003)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "SNA/2007/page_69.pdf-1",
+      "question": "what was the percentage change in the in pretax losses related to foreign exchange transactions in 2007",
+      "program": "subtract(1.7, 1.2), divide(#0, 1.2)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GS/2017/page_179.pdf-2",
+      "question": "what was the percentage change in dividends declared per common share between 2016 and 2017?",
+      "program": "subtract(2.90, 2.60), divide(#0, 2.60)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AES/2001/page_33.pdf-2",
+      "question": "what was the difference in the companies high compared to its low sales price for the second quarter of 2001?",
+      "program": "subtract(52.25, 39.95)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AAL/2016/page_8.pdf-3",
+      "question": "what is the percent of the passenger service personnel as a part of the total number of personnel",
+      "program": "divide(23000, 122300)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "DXC/2018/page_56.pdf-2",
+      "question": "in fiscal 2018 what percentage of total costs and expenses was selling general and administrative ( excludes depreciation and amortization and restructuring costs ) ?",
+      "program": "divide(2010, 22885)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GIS/2017/page_31.pdf-4",
+      "question": "in 2018 what was the ratio of anticipated benefits payments from our unfunded postemployment benefit plans to the deferred compensation",
+      "program": "divide(21, 14.6)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "TMUS/2017/page_29.pdf-2",
+      "question": "what is the average size ( in square feet ) of call centers in 2017?",
+      "program": "divide(1400000, 17)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "RSG/2012/page_93.pdf-1",
+      "question": "what was the change in the allowance for doubtful accounts in 2012",
+      "program": "subtract(45.3, 48.1)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "FIS/2016/page_9.pdf-2",
+      "question": "what is the growth rate for the ifs segment in 2016?",
+      "program": "subtract(4566, 3846), divide(#0, 3846)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AMT/2006/page_104.pdf-3",
+      "question": "what was the percent of the outstanding notes under the ati 7.25% ( 7.25 % ) notes , for 2006 to 2005",
+      "program": "divide(325.1, 400.0)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GS/2012/page_121.pdf-1",
+      "question": "what is the percentage change in total assets in 2012?",
+      "program": "subtract(938555, 923225), divide(#0, 923225)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "HST/2018/page_135.pdf-1",
+      "question": "what was the change in million of the unrecognized tax benefits between 2017 and 2018?",
+      "program": "subtract(11, 11)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GPN/2010/page_89.pdf-2",
+      "question": "what is the total fair value of non-vested shares as of may 31 , 2010?",
+      "program": "multiply(713, 42)",
+      "expressible": true,
+      "functions_used": [
+        "multiply"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "TFX/2015/page_89.pdf-3",
+      "question": "what would the total restructuring charges be without including prior years of 2014?",
+      "program": "add(170, 7819)",
+      "expressible": true,
+      "functions_used": [
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "UPS/2016/page_114.pdf-2",
+      "question": "what was the change in millions of buildings from 2015 to 2016?",
+      "program": "subtract(190, 207)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "HUM/2017/page_118.pdf-4",
+      "question": "what was the average amortization expense between 2015 and 2017",
+      "program": "add(75, 77), add(#0, 93), divide(#1, const_3)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "add",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MRO/2017/page_96.pdf-4",
+      "question": "what is the difference in the initial health care trend rate and the ultimate health care trend rate in 2016?",
+      "program": "subtract(8.25%, 4.50%)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MRK/2013/page_125.pdf-3",
+      "question": "what was the ratio of interest and penalties associated with uncertain tax positions in 2013 to 2012",
+      "program": "divide(319, 88)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "CMCSA/2015/page_112.pdf-4",
+      "question": "in 2015 what was the ratio of the nol carry forward for the federal to the foreign taxes",
+      "program": "divide(135, 700)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AWK/2013/page_122.pdf-1",
+      "question": "what is the he company 2019s gross liability at the end of 2013 if including interest and penalties?",
+      "program": "add(242, 177947)",
+      "expressible": true,
+      "functions_used": [
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AMT/2003/page_27.pdf-1",
+      "question": "what portion of the boston property will be offered for sub-lease?",
+      "program": "subtract(30000, 20000), divide(#0, 30000)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MRO/2013/page_19.pdf-3",
+      "question": "what was average worldwide net acreage expiring in the total three year period , in millions?",
+      "program": "table_sum(worldwide, none)",
+      "expressible": true,
+      "functions_used": [
+        "table_sum"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "CDNS/2015/page_30.pdf-4",
+      "question": "what was the percentage cumulative 5-year total stockholder return for cadence design systems inc . for the period ended 1/3/2015?",
+      "program": "subtract(314.36, const_100), divide(#0, const_100)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "IPG/2006/page_77.pdf-1",
+      "question": "what is the total interest expense incurred by the senior unsecured notes that was redeemed in august 2005?",
+      "program": "subtract(258.6, 250.0), subtract(#0, 1.4)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ALLE/2015/page_24.pdf-2",
+      "question": "considering the year 2014 , what are the variation between the expenses for environmental remediation at sites and the reserves environmental matters , in millions?",
+      "program": "subtract(8.8, 2.9)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AAL/2013/page_18.pdf-3",
+      "question": "what is the percentage effect of the hedges on the anticipated increase in the 2014 increase in fuel expenses",
+      "program": "subtract(104, 87), divide(#0, 87)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "IP/2006/page_75.pdf-2",
+      "question": "at december 31 , 2006 , what percentage of total future minimum commitments under existing non-cancelable leases and purchase obligations from lease obligations is due in 2008?",
+      "program": "divide(117, 579)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "NCLH/2018/page_64.pdf-2",
+      "question": "what is the percentage change in capital expenditures from 2017 to 2018?",
+      "program": "subtract(1.6, 1.2), divide(#0, 1.2)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "L/2009/page_84.pdf-2",
+      "question": "what is the return on investment for s&p500 from 2007 to 2008?",
+      "program": "subtract(80.74, 128.16), divide(#0, 128.16)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MAS/2017/page_27.pdf-3",
+      "question": "what was the percentage of the growth of the s&p 500 index from 2016 to 2017",
+      "program": "subtract(206.49, 169.82), divide(#0, 169.82)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "JKHY/2017/page_26.pdf-2",
+      "question": "jkhy's total 5 year return was what percent of the peer group?",
+      "program": "divide(322.60, 271.10)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "PKG/2005/page_74.pdf-4",
+      "question": "total purchase commitments over the next two years are what ( in thousands ) ?\\\\n\\\\n\\\\n",
+      "program": "add(2408, 1364)",
+      "expressible": true,
+      "functions_used": [
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MSI/2008/page_69.pdf-1",
+      "question": "what percentage difference of consolidated net sales from 2006 to 2008?",
+      "program": "multiply(66%, 28383), multiply(40%, 12099), subtract(#0, #1), divide(#2, #1)",
+      "expressible": true,
+      "functions_used": [
+        "multiply",
+        "multiply",
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GS/2013/page_72.pdf-2",
+      "question": "what is the percentage change in common shareholders 2019 equity due to the adjustments presented in the table to reach basel iii cet1?",
+      "program": "subtract(58219, 71267), divide(#0, 71267)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "D/2002/page_87.pdf-2",
+      "question": "what percent of contracts for long-term purchases of capacity are due currently?",
+      "program": "divide(643, 8369)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "UPS/2010/page_52.pdf-3",
+      "question": "what percentage of contractual obligations and commitments in total are pension funding?",
+      "program": "divide(2963, 23556)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "BLK/2012/page_145.pdf-1",
+      "question": "what portion of the total long-term borrowings is due in the next 24 months?",
+      "program": "add(750, 1000), divide(#0, 5700)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GS/2013/page_220.pdf-4",
+      "question": "what was the percentage cumulative total return for goldman sachs group inc . for the five year period ending 12/31/13?",
+      "program": "subtract(248.36, const_100), divide(#0, const_100)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "HII/2015/page_121.pdf-3",
+      "question": "what was the total sales as of december 312014 in millions",
+      "program": "add(1594, 1719), add(#0, 1717), add(#1, 1927)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "add",
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ETFC/2018/page_153.pdf-2",
+      "question": "what was the ratio of the pre-tax gain on the securities transferred from held-to-maturity securities to available-for-sale securities \\\\n",
+      "program": "divide(const_7, 4.7)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "UNP/2006/page_15.pdf-1",
+      "question": "what is the percent of both the main line and branch line routes that are owned by the company",
+      "program": "divide(26466, 32339)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "KHC/2018/page_132.pdf-3",
+      "question": "what is the net increase in outstanding shares during the period of 2016 to 2018 , in millions?",
+      "program": "subtract(1220, 1214)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "JKHY/2019/page_18.pdf-2",
+      "question": "what was the 5 year total return for jkhy?",
+      "program": "subtract(240.29, 100.00)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AMT/2006/page_113.pdf-3",
+      "question": "what is the net change in the balance of employee separations liability during 2005?",
+      "program": "subtract(301, 665)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "V/2014/page_126.pdf-2",
+      "question": "what is the percentage increase in the fair value of option granted from 2013 to 2014?",
+      "program": "subtract(44.11, 39.03)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "L/2009/page_84.pdf-4",
+      "question": "what is the return on investment for s&p500 from 2004 to 2006?",
+      "program": "subtract(121.48, const_100), divide(#0, const_100)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GPN/2008/page_78.pdf-4",
+      "question": "what percentage of net assets acquired was considered goodwill?",
+      "program": "divide(13536, 16594)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "HWM/2015/page_173.pdf-1",
+      "question": "how bigger were the interest and penalties concerning the interest income in the year 2015?",
+      "program": "divide(8, 2), subtract(#0, 1)",
+      "expressible": true,
+      "functions_used": [
+        "divide",
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MAS/2017/page_27.pdf-4",
+      "question": "what was the ratio of the value of the common stock masco to s&p 500 index in 2015",
+      "program": "divide(200.79, 151.94)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "DISCA/2011/page_49.pdf-1",
+      "question": "what was the percentage cumulative total shareholder return on disca from september 18 , 2008 to december 31 , 2011?",
+      "program": "subtract(296.67, const_100), divide(#0, const_100)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "DISH/2010/page_117.pdf-2",
+      "question": "what percentage of total minimum lease payments are due in 2015?",
+      "program": "divide(75970, 777443)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AAL/2013/page_18.pdf-1",
+      "question": "what is the percentage change in total cost of aircraft fuel in 2013?",
+      "program": "subtract(8959, 8717), divide(#0, 8717)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "HOLX/2008/page_143.pdf-1",
+      "question": "what is the estimated price of hologic common stock used in r2 acquisition?",
+      "program": "divide(205500, 8800)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ABMD/2005/page_29.pdf-4",
+      "question": "what is the percentage change in the risk-free rate from 2004 to 2005?",
+      "program": "subtract(3.87, 2.56), divide(#0, 2.56)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "V/2008/page_180.pdf-3",
+      "question": "what amount is expected to be paid for support incentives in the next three years?",
+      "program": "add(1088, 1105), add(#0, 945)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "BLK/2012/page_145.pdf-3",
+      "question": "what portion of the total long-term borrowings is due in the next 36 months?",
+      "program": "add(750, 1000), add(#0, 750), divide(#1, 5700)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "add",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MAR/2018/page_43.pdf-2",
+      "question": "of the total contractual obligations and off-balance sheet arrangements contractual obligations what percentage is due to capital lease obligations?",
+      "program": "divide(230, 13208)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "SNA/2012/page_110.pdf-3",
+      "question": "what is the total fair value of the non-vested performance awards at beginning of year , ( in thousands ) ?",
+      "program": "subtract(707, 48.87)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "UNP/2015/page_56.pdf-4",
+      "question": "what percentage of total freight revenues was the intermodal commodity group in 2015?",
+      "program": "divide(4074, 20397)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "DG/2005/page_44.pdf-3",
+      "question": "what is the cost difference over lifo in the last two years?",
+      "program": "add(5.8, 6.3)",
+      "expressible": true,
+      "functions_used": [
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "RSG/2018/page_135.pdf-2",
+      "question": "what was the percentage decline in the equity from 2017 to 2018 actual",
+      "program": "subtract(17, 30), divide(#0, 30)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MRK/2013/page_125.pdf-4",
+      "question": "what was the percentual decrease observed in the liabilities for accrued interest and penalties during 2012 and 2013?",
+      "program": "multiply(1.2, const_1000), subtract(665, #0), divide(#1, #0)",
+      "expressible": true,
+      "functions_used": [
+        "multiply",
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "FIS/2016/page_45.pdf-1",
+      "question": "what is the percentage increase in cash flows from operations from 2015 to 2016?",
+      "program": "subtract(1925, 1131), divide(#0, 1131)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AES/2010/page_227.pdf-3",
+      "question": "what percent of total recourse debt is current?",
+      "program": "divide(463, 4612)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "DVN/2018/page_35.pdf-3",
+      "question": "what is the percentage increase in total expense from 2017 to 2018?",
+      "program": "subtract(156, 15), divide(#0, 15), multiply(#1, const_100)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide",
+        "multiply"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ETR/2016/page_150.pdf-2",
+      "question": "relating to the texas securitization bonds , what were the total amounts ( millions ) of the issuance when considering the transaction costs and the related deferred income tax benefits?",
+      "program": "add(353, 6), subtract(#0, 32)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ETR/2004/page_212.pdf-1",
+      "question": "what is the growth rate in net revenue in 2004 for entergy louisiana?",
+      "program": "subtract(931.3, 973.7), divide(#0, 973.7)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "K/2006/page_52.pdf-1",
+      "question": "what percent of net cash provided by operations is retained as cashflow in 2006?",
+      "program": "divide(957.4, 1410.5)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "DRE/2002/page_15.pdf-3",
+      "question": "what was the percent of the total gains that was from the sales of land",
+      "program": "add(45708, 4800), divide(5080, #0)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AAL/2014/page_15.pdf-2",
+      "question": "what percentage of approximate number of active full-time equivalent employees are passenger service personnel ?",
+      "program": "divide(22500, 113300)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MAS/2012/page_26.pdf-2",
+      "question": "what was the percent of the increase in the performance of the s&p 500 index from 2008 to 2009",
+      "program": "subtract(79.90, 63.45), divide(#0, 63.45)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AMT/2008/page_107.pdf-4",
+      "question": "what is the net change in the balance of liability related to employee separations during 2006?",
+      "program": "subtract(7327, 20963)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "PPG/2012/page_29.pdf-3",
+      "question": "what was the difference in millions of capital spending related to business acquisitions from 2010 to 2011?",
+      "program": "subtract(56, 34)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "PPG/2006/page_42.pdf-4",
+      "question": "what was the change in millions in the reserve for product warranties from 2005 to 2006?",
+      "program": "subtract(10, 4)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "INTC/2015/page_41.pdf-4",
+      "question": "what percentage of total facilities as measured in square feet are leased?",
+      "program": "divide(8.1, 56.0)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "UPS/2016/page_114.pdf-1",
+      "question": "what was the change in millions of vehicles from 2015 to 2016?",
+      "program": "subtract(68, 74)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "SNA/2013/page_34.pdf-2",
+      "question": "what is the return on investment if $ 100 are invested in s&p500 at the end of 2008 and sold at the end of 2010?",
+      "program": "subtract(145.51, 100), divide(#0, 100)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MKTX/2004/page_99.pdf-3",
+      "question": "in 2004 and 2003 , what were the total shares of common stock that were issued to employees?",
+      "program": "add(1939734, 1937141)",
+      "expressible": true,
+      "functions_used": [
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "TFX/2017/page_78.pdf-1",
+      "question": "what portion of the total number of securities approved by security holders is issued?",
+      "program": "add(1708928, 3629455), divide(1708928, #0)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ANSS/2012/page_93.pdf-1",
+      "question": "for the year ended december 312012 what was the percent of the revenue by geographic area that was from the united states",
+      "program": "divide(265436, 798018)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "PPG/2012/page_29.pdf-1",
+      "question": "what are cumulative three year dividends in millions?",
+      "program": "add(358, 355), add(#0, 360)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MRK/2013/page_3.pdf-1",
+      "question": "what is the growth rate in total sales in 2013?",
+      "program": "subtract(44033, 47267), divide(#0, 47267)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MKTX/2012/page_42.pdf-1",
+      "question": "by how much did the high of mktx stock increase from 2011 to march 2012?",
+      "program": "subtract(37.79, 31.16), divide(#0, 31.16)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "CB/2008/page_229.pdf-2",
+      "question": "what was the average amortization expense from 2006 to 2008",
+      "program": "add(90, 77), add(64, #0), divide(#1, const_3)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "add",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "LMT/2012/page_73.pdf-3",
+      "question": "what is the percentage change in the weighted average common shares outstanding for basic computations from 2010 to 2011?",
+      "program": "subtract(335.9, 364.2), divide(#0, 364.2)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "K/2006/page_52.pdf-3",
+      "question": "by what percent did net cash from operations increase between 2004 and 2006?",
+      "program": "subtract(1410.5, 1229.0), subtract(#0, 1229.0)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "JPM/2018/page_90.pdf-5",
+      "question": "by how many basis points did net interest yield on average interest-earning assets 2013 managed basis improve form 2016 to 2017?\\\\n",
+      "program": "subtract(2.36, 2.25), multiply(#0, const_100)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "multiply"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "IP/2006/page_31.pdf-3",
+      "question": "what was the industrial packaging profit margin in 2004",
+      "program": "divide(373, 4545)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "JPM/2014/page_70.pdf-2",
+      "question": "what percentage of total net revenue was due to net interest income in 2014?",
+      "program": "divide(43634, 94205)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ETR/2016/page_150.pdf-1",
+      "question": "what is the total expected payments on the bonds for the next 5 years for entergy louisiana investment recovery funding?",
+      "program": "add(21.7, 22.3), add(#0, 22.7), add(#1, 23.2), add(#2, 11)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "add",
+        "add",
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ILMN/2008/page_82.pdf-2",
+      "question": "what was the value of the shares exercised in 2011",
+      "program": "multiply(1125734, 10.91)",
+      "expressible": true,
+      "functions_used": [
+        "multiply"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "LKQ/2016/page_87.pdf-4",
+      "question": "in 2016 what was the percent of the total future minimum lease commitments due in 2019",
+      "program": "divide(136462, 1184594)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "SNA/2013/page_84.pdf-1",
+      "question": "in 2013 what was the percent of the allowances for doubtful accounts",
+      "program": "divide(14.9, 546.5)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "BLK/2015/page_124.pdf-3",
+      "question": "what portion of the total future minimum commitments under operating leases is due in the next 36 months?",
+      "program": "add(134, 133), add(#0, 131), divide(#1, 1203)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "add",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MS/2013/page_139.pdf-1",
+      "question": "did the company have more exposure to the insurance industry than the real estate industry in its derivative portfolio?",
+      "program": "greater(538, 503)",
+      "expressible": true,
+      "functions_used": [
+        "greater"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "STT/2006/page_95.pdf-1",
+      "question": "what is the percentage change in total assets in unconsolidated conduits from 2005 to 2006?",
+      "program": "subtract(25.25, 17.90), divide(#0, 17.90)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AON/2007/page_188.pdf-1",
+      "question": "what is the percentual increase in the balance during the year 2007?",
+      "program": "divide(70, 53), subtract(#0, const_1)",
+      "expressible": true,
+      "functions_used": [
+        "divide",
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ILMN/2008/page_86.pdf-1",
+      "question": "what was the percent of the change in the company 2019s uncertain tax positions from 2007 to 2008",
+      "program": "divide(2402, 21376)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "PNC/2012/page_174.pdf-2",
+      "question": "what was the two-year total for specific reserves in the alll , in millions?",
+      "program": "add(587, 580)",
+      "expressible": true,
+      "functions_used": [
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ABMD/2012/page_79.pdf-2",
+      "question": "how much of total future minimum lease payments are due currently?",
+      "program": "add(1473, 4218), divide(#0, const_2)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ADI/2010/page_80.pdf-3",
+      "question": "based on the table , what would be the annual percent return for the companies investments?",
+      "program": "subtract(8690, 7943), divide(#0, 7943)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "JPM/2018/page_90.pdf-4",
+      "question": "by how many basis points did net interest yield on average interest-earning assets 2013 managed basis improve form 2017 to 2018?",
+      "program": "subtract(2.50, 2.36), multiply(#0, const_100)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "multiply"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "RCL/2016/page_6.pdf-1",
+      "question": "at the end of 2016 , what was the average number of berths per ship in the global cruise fleet?",
+      "program": "divide(503000, 298)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AAPL/2006/page_100.pdf-1",
+      "question": "what was the 2006 tax expense?",
+      "program": "multiply(829, 29%)",
+      "expressible": true,
+      "functions_used": [
+        "multiply"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "UNP/2011/page_33.pdf-1",
+      "question": "with a similar improvement as in 2010 , what would expected operating ratio be in 2011?",
+      "program": "divide(5.5, const_100), add(#0, 70.6%)",
+      "expressible": true,
+      "functions_used": [
+        "divide",
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ZBH/2007/page_67.pdf-2",
+      "question": "what is the percent change in total acquisition integration and other expenses from 2006 to 2007?",
+      "program": "subtract(25.2, 6.1), divide(#0, 6.1)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "DRE/2008/page_46.pdf-4",
+      "question": "what was the percentage improvement in the unbilled receivables on construction contracts from 2007 to 2008",
+      "program": "subtract(22.7, 33.1), divide(#0, 33.1)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ZBH/2008/page_57.pdf-2",
+      "question": "what percent of total contractual obligations is categorized as long term debt?",
+      "program": "divide(460.1, 1020.1)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MO/2014/page_62.pdf-4",
+      "question": "what is the growth rate in net earnings attributable to altria group inc . from 2013 to 2014?",
+      "program": "subtract(5070, 4535), divide(#0, 4535)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MO/2014/page_39.pdf-1",
+      "question": "what is the higher pricing as a percentage of the operating companies income increase?",
+      "program": "divide(765, 824)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AWK/2014/page_121.pdf-2",
+      "question": "what was the percentage change in deferred tax assets and regulatory assets from 2013 to 2014",
+      "program": "subtract(6348, 6241), divide(#0, 6241)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "IP/2006/page_31.pdf-2",
+      "question": "what percentage of 2005 industrial packaging sales are containerboard sales?",
+      "program": "divide(895, 4625)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AWK/2014/page_121.pdf-1",
+      "question": "what was the net change in tax positions in 2014",
+      "program": "add(53818, -36528), add(#0, 157)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ETR/2011/page_17.pdf-2",
+      "question": "what is the total amount of variance that favorably affected net revenue in 2011?",
+      "program": "add(13, 24), add(#0, 49)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AON/2007/page_171.pdf-1",
+      "question": "what is the net change in the balance of accumulated other comprehensive loss from 2006 to 2007?",
+      "program": "subtract(-726, -1010)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ETR/2013/page_21.pdf-2",
+      "question": "what are the nuclear realized price changes as a percentage of the decrease in net revenue from 2011 to 2012?",
+      "program": "subtract(2045, 1854), divide(194, #0)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "CB/2008/page_229.pdf-3",
+      "question": "what is the net income-to-capital ratio for bermuda subsidiaries in 2008?",
+      "program": "divide(684, 7001)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ABMD/2012/page_79.pdf-3",
+      "question": "what is the percentage increase in base rent for danvers , massachusetts facility from the period 2008-2010 to 2010 - 2014?",
+      "program": "subtract(64350, 40000), divide(#0, 40000)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AMT/2007/page_29.pdf-1",
+      "question": "what is the square footage of properties in massachusetts?\\\\n\\\\n",
+      "program": "add(19600, 13900), add(#0, 57800)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "UA/2011/page_69.pdf-2",
+      "question": "as of december 312012 what was the percent of the scheduled maturities of long term debt as part of the long term debt",
+      "program": "divide(6882, 70842)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "RSG/2010/page_57.pdf-1",
+      "question": "what was the ratio of the 5.000% ( 5.000 % ) to 6.200% ( 6.200 % ) the senior notes in march 2010",
+      "program": "divide(850.0, 650.0)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GPN/2013/page_87.pdf-2",
+      "question": "what was the average unrecognized compensation cost related to unvested restricted stock per year?",
+      "program": "divide(33.5, 2.5)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ETR/2015/page_17.pdf-4",
+      "question": "in october 2015 , what was the ratio of the entergy recorded a regulatory liability to the tax liability",
+      "program": "subtract(107, 66), divide(#0, 66)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "UNP/2011/page_24.pdf-1",
+      "question": "in 2012 , are the planned capital expenditures greater than free cash flow in 2011?",
+      "program": "greater(3.6, 1.9)",
+      "expressible": true,
+      "functions_used": [
+        "greater"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GPN/2008/page_78.pdf-3",
+      "question": "what portion of the net assets acquired is related to goodwill?",
+      "program": "divide(13536, 16594)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "FIS/2016/page_31.pdf-4",
+      "question": "what is the total return if $ 100000 are invested in fidelity national information system in 12/11 and sold in 12/16?",
+      "program": "subtract(311.81, const_100), divide(const_1000000, const_100), multiply(#1, #0)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide",
+        "multiply"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GPN/2013/page_92.pdf-2",
+      "question": "what is the percentage change in the expected minimum payments from 2014 to 2015?",
+      "program": "subtract(8985, 11057)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AES/2001/page_33.pdf-1",
+      "question": "what was the difference in the companies high compared to its low sales price for the fourth quarter of 2001?",
+      "program": "subtract(17.80, 11.60)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "JPM/2009/page_175.pdf-3",
+      "question": "in 2008 what was the ratio of the trading assets derivatives - receivables to the payables",
+      "program": "divide(110457, 77901)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MSI/2012/page_87.pdf-3",
+      "question": "in 2011 what was the average share price applicable to the employee purchases of 2.2 millions",
+      "program": "add(30.56, 35.61), divide(#0, const_2)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "UPS/2010/page_52.pdf-1",
+      "question": "what percentage of total expected cash outflow to satisfy contractual obligations and commitments as of december 31 , 2010 are due in 2012?",
+      "program": "divide(1334, 23556)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GS/2014/page_165.pdf-4",
+      "question": "what percentage of total other liabilities and accrued expenses in 2014 are due to compensation and benefits?",
+      "program": "divide(8368, 16075)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "IP/2009/page_45.pdf-2",
+      "question": "what percentage of contractual obligations for future payments under existing debt and lease commitments and purchase obligations at december 31 , 2009 due in 2012 are maturities of long-term debt?",
+      "program": "divide(199, 946)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "AMT/2016/page_49.pdf-3",
+      "question": "what is the growth rate in the price of shares from the highest value during the quarter ended december 31 , 2016 and the closing price on february 17 , 2017?",
+      "program": "subtract(108.11, 118.09), divide(#0, 118.09)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "FBHS/2017/page_22.pdf-1",
+      "question": "in 2017 what was the ratio of the cabinets sales to the doors",
+      "program": "divide(2467.1, 502.9)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "CME/2017/page_40.pdf-2",
+      "question": "what is the anualized return for s&p 500 from 2012 to 2017?",
+      "program": "subtract(208.14, 100), divide(#0, 100), divide(const_1, const_5), exp(#1, #2), subtract(#3, const_1)",
+      "expressible": false,
+      "functions_used": [
+        "subtract",
+        "divide",
+        "divide",
+        "exp",
+        "subtract"
+      ],
+      "unsupported_functions": [
+        "exp"
+      ]
+    },
+    {
+      "id": "GS/2012/page_189.pdf-1",
+      "question": "in millions for 2012 and 2011 , what was the largest tier 1 capital amount?\\\\n",
+      "program": "table_max(tier 1 capital, none)",
+      "expressible": true,
+      "functions_used": [
+        "table_max"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "BLK/2014/page_120.pdf-1",
+      "question": "what percent of the commitments are due after 2019?",
+      "program": "divide(613, 1178)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "UPS/2007/page_98.pdf-2",
+      "question": "what is the average expected dividend per share in 2007?",
+      "program": "multiply(2.13%, 64.20)",
+      "expressible": true,
+      "functions_used": [
+        "multiply"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "APD/2016/page_40.pdf-1",
+      "question": "what is the increase in the operating margin observed in 2015 and 2016?",
+      "program": "subtract(26.8%, 21.9%)",
+      "expressible": true,
+      "functions_used": [
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "HWM/2018/page_96.pdf-1",
+      "question": "considering the average exercise price of options , what is the estimated total value of stock options in 2018 , in millions of dollars?",
+      "program": "multiply(9, 26.79)",
+      "expressible": true,
+      "functions_used": [
+        "multiply"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ZBH/2009/page_58.pdf-3",
+      "question": "what was the percent change in operating leases between 2011/12 and 2013/4?",
+      "program": "subtract(26.6, 47.6), divide(#0, 47.6)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "MKTX/2004/page_99.pdf-4",
+      "question": "in 2001 , the company awarded how many total shares to employees?",
+      "program": "add(64001, 289581)",
+      "expressible": true,
+      "functions_used": [
+        "add"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "CDNS/2015/page_30.pdf-3",
+      "question": "what was the difference in percentage cumulative 5-year total stockholder return for cadence design systems inc . and the nasdaq copmosite for the period ended 1/3/2015?",
+      "program": "subtract(314.36, const_100), divide(#0, const_100), subtract(223.74, const_100), divide(#2, const_100), subtract(#1, #3)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide",
+        "subtract",
+        "divide",
+        "subtract"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "WRK/2018/page_107.pdf-1",
+      "question": "by what percent did the balance of tax benefits increase between the beginning of 2016 and the end of 2018?",
+      "program": "subtract(127.1, 106.6), divide(#0, 106.6)",
+      "expressible": true,
+      "functions_used": [
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "ABMD/2012/page_41.pdf-1",
+      "question": "did abiomed outperform the nasdaq composite index?",
+      "program": "greater(162.45, 127.66)",
+      "expressible": true,
+      "functions_used": [
+        "greater"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "UPS/2007/page_98.pdf-1",
+      "question": "what is the total cash inflow from the stock purchases of employees in 2007 , ( in millions ) ?",
+      "program": "multiply(1.8, 64.20)",
+      "expressible": true,
+      "functions_used": [
+        "multiply"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "BLL/2006/page_67.pdf-3",
+      "question": "what percentage of total net assets acquired were goodwill?",
+      "program": "divide(411.1, 802.6)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "NCLH/2018/page_97.pdf-3",
+      "question": "what percent of long-term debt was paid off in 2021?",
+      "program": "divide(2549621, 6609866)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "LMT/2014/page_91.pdf-2",
+      "question": "what was the average employee contributions from 2012 to 2014",
+      "program": "add(385, 383), add(#0, 380), divide(#1, const_3)",
+      "expressible": true,
+      "functions_used": [
+        "add",
+        "add",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "GPN/2010/page_89.pdf-4",
+      "question": "what is the percentage change in the total fair value of non-vested shares from 2009 to 2010?",
+      "program": "multiply(762, 41), multiply(713, 42), subtract(#1, #0), divide(#2, #0)",
+      "expressible": true,
+      "functions_used": [
+        "multiply",
+        "multiply",
+        "subtract",
+        "divide"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "UNP/2010/page_21.pdf-3",
+      "question": "had all four quarters of 2010 had the same number of total shares purchased , how many total shares were purchased in 2010?",
+      "program": "multiply(3063816, const_4)",
+      "expressible": true,
+      "functions_used": [
+        "multiply"
+      ],
+      "unsupported_functions": []
+    },
+    {
+      "id": "UNP/2015/page_56.pdf-1",
+      "question": "in 2015 what was the percent of the total operating revenues associated with agriculture products",
+      "program": "divide(3581, 21813)",
+      "expressible": true,
+      "functions_used": [
+        "divide"
+      ],
+      "unsupported_functions": []
+    }
+  ]
+}

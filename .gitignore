@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+runs/
+.env
+
+# Large raw downloaded caches -- reproducible via the scripts that fetch them
+# (coverage_finqa.py --download, sample_2wiki.py). Keep the small derived outputs
+# (finqa_coverage_*.json, sample_2wiki.csv/.jsonl) but not the multi-MB raw dumps.
+data/finqa_test.json
+data/2wiki_rows_raw.jsonl
+data/2wiki_probe.json

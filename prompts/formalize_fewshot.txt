@@ -1,0 +1,61 @@
+EXAMPLE 1
+
+Context:
+[p0] Heaven Help Us was released on October 5 1985.
+[p1] Ghar Ki Rani was released on 1991-03-12.
+
+Question: Which film was released first, Heaven Help Us or Ghar Ki Rani?
+Expected answer type: entity
+
+Output:
+[
+  {"step_id": "s1", "operator": "temporal_order",
+   "args": [
+     {"ref_type": "span", "doc_id": "p0", "start": 24, "end": 38, "text": "October 5 1985"},
+     {"ref_type": "span", "doc_id": "p1", "start": 24, "end": 34, "text": "1991-03-12"}
+   ],
+   "params": {"op": "before"}, "result_type": "bool", "is_final": false}
+]
+
+(Note: "October 5 1985" is not one of this operator set's supported date literal
+formats -- OPERATORS.md requires ISO-ish Y-M-D/Y-M/Y. A real formalizer facing this
+should emit an empty array here, or a span of a normalized date if one exists in
+context. This example intentionally shows a case you should recognize as NOT cleanly
+expressible as written, rather than forcing it through.)
+
+EXAMPLE 2
+
+Context:
+[p0] Empress Xu's husband was the Yongle Emperor.
+[p1] The Yongle Emperor was born in Nanjing.
+
+Question: What is the place of birth of Empress Xu's husband?
+Expected answer type: entity
+
+Output:
+[]
+
+(This question needs zero operator calls -- it's a pure two-hop bridge retrieval:
+find "husband" entity, then find that entity's birthplace. Per OPERATORS.md, bridge
+retrieval is not an operator; there is nothing for this gate to check beyond two span
+references. Emitting an empty array here is CORRECT, not a failure -- it tells the
+scoring harness "no operator needed, this is pure retrieval," which is a distinct,
+trackable category, not the same as "couldn't formalize it.")
+
+EXAMPLE 3
+
+Context:
+[p0] Company X reported revenue of 5829 in 2015 and 5735 in 2014.
+
+Question: What is the net change in revenue during 2015?
+Expected answer type: number
+
+Output:
+[
+  {"step_id": "s1", "operator": "arithmetic",
+   "args": [
+     {"ref_type": "span", "doc_id": "p0", "start": 32, "end": 36, "text": "5829"},
+     {"ref_type": "span", "doc_id": "p0", "start": 50, "end": 54, "text": "5735"}
+   ],
+   "params": {"op": "sub"}, "result_type": "number", "is_final": true}
+]
