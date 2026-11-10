@@ -163,6 +163,27 @@ class TestArmStubsRaiseCleanly(unittest.TestCase):
             harness.run_arm4b_pal_style(SAMPLE_QUESTION, "http://fake", "fake-model")
 
 
+class TestHttpErrorCapture(unittest.TestCase):
+    def test_http_error_body_captured_in_error_field(self):
+        """call_endpoint should capture the response body from HTTP errors,
+        not just the status line. This is critical for diagnosing server-side
+        failures (e.g. Ollama 500s) after the fact."""
+        import io
+        import urllib.error
+        from unittest.mock import patch
+
+        error_body = b'{"error":"model not loaded"}'
+        http_error = urllib.error.HTTPError(
+            url="http://fake/v1/chat/completions",
+            code=500, msg="Internal Server Error",
+            hdrs=None, fp=io.BytesIO(error_body))
+
+        with patch("urllib.request.urlopen", side_effect=http_error):
+            record = harness.call_endpoint("http://fake/v1", "m", [], "A")
+        self.assertIn("500", record.error)
+        self.assertIn("model not loaded", record.error)
+
+
 class TestMatchedComputeLedgerFields(unittest.TestCase):
     def test_call_record_has_required_ledger_fields(self):
         record = make_mock_caller(WELL_FORMED_STEPS)("http://fake", "m", [], "A")

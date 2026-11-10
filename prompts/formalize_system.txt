@@ -7,7 +7,8 @@ Each step is an object:
 {
   "step_id": "s1",
   "operator": "<one of: numeric_compare, count, negate, conjoin, disjoin, temporal_order,
-               set_membership, transitive_chain, arithmetic, date_diff, arg_extreme, aggregate>",
+               set_membership, transitive_chain, arithmetic, date_diff, arg_extreme, aggregate,
+               entity_equal>",
   "args": [ <leaf>, <leaf>, ... ],
   "params": { ... operator-specific enum fields, e.g. {"op": "gt"} ... },
   "result_type": "<bool|number|entity|date|set>",

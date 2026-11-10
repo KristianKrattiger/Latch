@@ -100,7 +100,19 @@ def call_endpoint(base_url: str, model: str, messages: List[dict], mode: str,
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             body = json.loads(resp.read().decode("utf-8"))
-    except (urllib.error.URLError, urllib.error.HTTPError) as e:
+    except urllib.error.HTTPError as e:
+        error_body = ""
+        try:
+            error_body = e.read().decode("utf-8", errors="replace")[:500]
+        except Exception:
+            pass
+        detail = f"HTTP Error {e.code}: {e.reason}"
+        if error_body:
+            detail += f" | body: {error_body}"
+        return CallRecord(model=model, mode=mode, forward_passes=1, input_tokens=0,
+                           output_tokens=0, token_count_source="estimated",
+                           wall_time_s=time.time() - t0, error=detail)
+    except urllib.error.URLError as e:
         return CallRecord(model=model, mode=mode, forward_passes=1, input_tokens=0,
                            output_tokens=0, token_count_source="estimated",
                            wall_time_s=time.time() - t0, error=str(e))
