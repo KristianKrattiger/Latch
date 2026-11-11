@@ -217,6 +217,64 @@ However, the failure taxonomy reveals the bottleneck is **not model reasoning** 
 
 ---
 
+## 2026-11-11: G2-prime-v3 — qwen2.5:14b with full fix stack
+
+Unregistered. Same fixes as G2-prime-v3 (text-search gate, no-offset schema,
+compositional few-shot, NL date parsing, conjoin fix) applied to 14b.
+
+**Run:** `harness.py --mode A --endpoint http://localhost:11434/v1 --model qwen2.5:14b --input sample_2wiki_decomposable.jsonl --out runs/mode_a_qwen25_14b_v2.jsonl`
+
+### Results
+
+| Metric | Value |
+|---|---|
+| Total questions | 72 |
+| Parse success | 68/72 (94%) |
+| Gate ADMIT | **24/72 (33.3%)** |
+
+Failure taxonomy:
+
+| Category | n | % |
+|---|---|---|
+| TYPE_MISMATCH | 21 | 29% |
+| PROVENANCE_SPAN_NOT_FOUND | 19 | 26% |
+| MISSING_STEP (parse fail) | 4 | 6% |
+| UNADMITTED_STEP_REF | 2 | 3% |
+| MISSING_STEP (empty) | 1 | 1% |
+
+By question type:
+
+| Type | n | ADMIT | TYPE_MISMATCH | SPAN_NOT_FOUND | OTHER |
+|---|---|---|---|---|---|
+| bridge_comparison | 25 | 8 | 11 | 6 | 0 |
+| comparison | 22 | **16** | 3 | 3 | 0 |
+| compositional | 25 | 0 | 7 | 10 | 8 |
+
+### 7b vs 14b comparison (full fix stack)
+
+| | qwen2.5:7b (v4) | qwen2.5:14b (v2) |
+|---|---|---|
+| Gate ADMIT | **36.1%** | 33.3% |
+| bridge_comparison admits | **16/25** | 8/25 |
+| comparison admits | 10/22 | **16/22** |
+| compositional admits | 0/25 | 0/25 |
+| PROVENANCE_SPAN_NOT_FOUND | 11 (15%) | **19 (26%)** |
+| MISSING_STEP (empty) | 16 (22%) | 1 (1%) |
+
+### Key observations
+
+1. **14b does not beat 7b overall**: 33.3% vs 36.1%. Scale does not monotonically improve admission rate with the current fix stack.
+2. **Comparison type improves with scale**: 10/22 → 16/22. 14b is better at the two-hop comparison structure.
+3. **bridge_comparison regresses with scale**: 16/25 → 8/25. 14b generates more verbose spans that fail provenance (PROVENANCE_SPAN_NOT_FOUND 6→6, but TYPE_MISMATCH 6→11).
+4. **Compositional still zero**: 0/25 for both models. 14b eliminates empty arrays (16→1) but the steps it produces fail on span provenance or type issues.
+5. **PROVENANCE_SPAN_NOT_FOUND spikes at 14b**: 11→19. Larger model paraphrases or truncates spans rather than copying verbatim — a prompt compliance issue, not a capability gap.
+
+### Verdict
+
+Both models clear 30% with the full fix stack. 7b slightly outperforms 14b overall; 14b wins on comparison. Neither solves compositional. The bottleneck has shifted from gate engineering to span faithfulness (PROVENANCE_SPAN_NOT_FOUND) and remaining TYPE_MISMATCH cases.
+
+---
+
 ## 2026-11-11: G2-prime-v2 — extended `_parse_date()` for natural-language dates
 
 Unregistered follow-on to G2-prime. Change: `_parse_date()` extended to handle
