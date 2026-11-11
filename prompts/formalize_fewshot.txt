@@ -49,7 +49,13 @@ do not add conjoin after it. Use steps whenever the question ends in a compariso
 count, or arithmetic operation, even if the retrieval leading up to it is implicit.
 Only emit [] when the question is PURE retrieval with no operator at the end — e.g.
 "What city was X born in?" has no operator and needs no steps. "Were X and Y born in
-the same city?" ends in entity_equal and needs a step.)
+the same city?" ends in entity_equal and needs a step.
+
+entity_equal compares the TEXT of two spans verbatim. For nationality questions
+("same nationality?"), the args must be the NATIONALITY strings, not the person's
+name. Find the nationality word in the director's bio doc — e.g. "French" from
+"was a French film director" — and use that as the span text. Never pass a person's
+name to entity_equal for a nationality question.)
 
 EXAMPLE 3
 
@@ -84,3 +90,41 @@ Output:
 (Pure retrieval: find "husband" entity, then find that entity's birthplace. There
 is no operator to apply — the answer is a span directly in the context. Emit an
 empty array. This is CORRECT, not a failure.)
+
+EXAMPLE 5
+
+Context:
+[p0] Film A is a 1945 Argentine film directed by Carlos Borcosque.
+[p1] Carlos Borcosque (9 September 1894 – 5 September 1965) was a Chilean film director.
+[p2] Film B is a 1968 Italian film directed by Maurice Cloche.
+[p3] Maurice Cloche (17 June 1907 – 23 March 1990) was a French film director.
+
+Question: Which film has the director who died earlier, Film A or Film B?
+Expected answer type: entity
+
+Output:
+[
+  {"step_id": "s1", "operator": "temporal_order",
+   "args": [
+     {"ref_type": "span", "doc_id": "p1", "text": "5 September 1965"},
+     {"ref_type": "span", "doc_id": "p3", "text": "23 March 1990"}
+   ],
+   "params": {"op": "before"}, "result_type": "bool", "is_final": true}
+]
+
+(bridge_comparison rule: use the director's OWN biography document for dates, NOT
+the film document that merely mentions them. Here p0 and p2 are film docs — ignore
+their production years as proxies for director dates. p1 and p3 are director bio
+docs, identifiable by the pattern "Name (DATE – DATE) was a director".
+
+For "died earlier/later": extract the DEATH date — the second date in the range,
+after the dash. "5 September 1965" is a verbatim substring of p1; it passes
+provenance and is unambiguous. Do NOT submit the full range "9 September 1894 –
+5 September 1965" for a death-date question — the gate will parse the first date
+(birth) instead.
+
+For "born earlier/later": extract the BIRTH date — the first date before the dash.
+The full range also works for birth questions since the gate takes the first date.
+
+Summary: film doc → film release dates only. Director bio doc → birth/death dates.
+Never use a film's production year as a director's birth or death date.)
