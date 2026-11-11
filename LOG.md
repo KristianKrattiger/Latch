@@ -404,4 +404,91 @@ By question type:
 
 ### G2-prime-v3 verdict
 
-**36.1% > 30%** — does not kill. Per PREREG.md §6 "30–50%: try a larger model." The fix ladder (B+C+D+E+F) has closed the gap from 0% to 36% via gate engineering and prompt calibration, without changing model scale. Compositional type remains a gap (0/25); the other two types now admit at 64% (bridge_comparison) and 45% (comparison).
+**Corrected count: 42/72 = 58.3% correct formalization** when `[]` is scored correctly.
+
+The 16 empty-array compositional cases are all pure-retrieval questions ("Where was X's father born?", "What is the place of death of Y's husband?") where `[]` is the correct formalization per the system prompt ("emit [] when PURE retrieval with no operator at the end"). The gate vacuously admits them and they represent correct model behavior, not failures.
+
+Breakdown:
+- Non-trivial admits (non-empty steps, gate ADMIT): 26/72 (36%)
+- Trivial admits (pure-retrieval `[]`, correct): 16/72 (22%)
+- **Total correct formalization: 42/72 (58.3%)**
+
+**58.3% > 50% — clears the G2 promotion bar per PREREG.md §6.**
+
+Remaining failures (30/72): TYPE_MISMATCH 15 (21%), PROVENANCE_SPAN_NOT_FOUND 11 (15%), parse/arity 4 (6%).
+
+**Next required step per PREREG §6:** manual trace review of ~20-30 admitted cases to check for STRUCTURALLY_VALID_SEMANTICALLY_WRONG (false-pass class). If not dominant, G2 promotes to G3.
+
+---
+
+## 2026-11-11: G2 manual trace review — STRUCTURALLY_VALID_SEMANTICALLY_WRONG audit
+
+Reviewed all 26 non-trivial admits from G2-prime-v3 (qwen2.5:7b, v4 run).
+16 trivial admits (empty arrays, pure-retrieval compositional) are all genuine
+correct formalizations and not reviewed further.
+
+### Verdicts (26 non-trivial admits)
+
+| # | Type | Verdict | Issue |
+|---|---|---|---|
+| 01 | bridge | **SVSS** | '1945','1968' are film years, not director death years |
+| 02 | bridge | **SVSS** | One death date correct; other uses film year instead of director death year |
+| 03 | bridge | **SVSS** | One death date correct; other uses film year instead of director death year |
+| 04 | bridge | **SVSS** | One birth range correct; other uses film description ("made in 1946...") as birth year |
+| 05 | bridge | **SVSS** | Both spans are birth-death ranges; gate extracts birth years for "died first" question (coincidentally right) |
+| 06 | bridge | **SVSS** | Convoluted chain; spurious steps compare film release years 2004 vs 1994 |
+| 07 | bridge | **SVSS** | Director birth year (1898) vs film year (1935) — neither is a death year |
+| 08 | bridge | **SVSS** | entity_equal(director_name_A, director_name_B) = False; question asks same nationality (ans: yes) |
+| 09 | bridge | **SVSS** | One birth range correct; other uses film year (1943) instead of director birth year |
+| 10 | bridge | **SVSS** | One birth date correct; other uses film year (1967) instead of director birth year |
+| 11 | bridge | **SVSS** | One birth range correct; other uses film year (2005) for wrong film |
+| 12 | bridge | **CORRECT** | Model extracted death date substrings directly from both birth-death ranges ✓ |
+| 13 | bridge | **SVSS** | One birth date correct; other uses film release date (2006) as director birth year |
+| 14 | bridge | **SVSS** | Mixed film years and birth dates, spurious multi-step chain |
+| 15 | bridge | **CORRECT** | Both birth-death ranges, _parse_date extracts birth dates for "born earlier" ✓ |
+| 16 | bridge | **SVSS** | Both birth-death ranges, gate extracts birth dates for "died first" (coincidentally right) |
+| 17 | comparison | **CORRECT** | Both film release years, correct ✓ |
+| 18 | comparison | **SVSS** | entity_equal('French', 'French-Swedish') = False; expected yes |
+| 19 | comparison | **CORRECT** | Both birth-death ranges, birth dates compared for "born earlier" ✓ |
+| 20 | comparison | **CORRECT** | Both film release years, correct ✓ |
+| 21 | comparison | **CORRECT** | Both explicit birth dates from correct docs ✓ |
+| 22 | comparison | **CORRECT** | Both film release years, correct ✓ |
+| 23 | comparison | **CORRECT** | Both explicit birth dates from correct docs ✓ |
+| 24 | comparison | **SVSS** | p6 references Hartley Lobban (wrong person), not Alexey Volkonsky |
+| 25 | comparison | **CORRECT** | Both film release years, correct ✓ |
+| 26 | comparison | **CORRECT** | Both explicit birth dates from correct docs ✓ |
+
+**Non-trivial: 10 CORRECT, 16 SVSS (62% SVSS — dominant)**
+
+### SVSS patterns
+
+Three systematic failure modes, all in bridge_comparison:
+
+1. **Film year as director attribute** (10 cases): Model picks the year from a film synopsis doc ("a 1967 film directed by X") instead of finding the director's biography doc with their actual birth/death date. The gate cannot distinguish a film year from a birth year — both are parseable dates in the referenced doc.
+
+2. **Birth date for death date** (3 cases): Model submits a full "YYYY–YYYY" birth–death range; `_parse_date` extracts the first (birth) date even when the question asks who *died* first. The gate has no way to know which end of the range was intended.
+
+3. **Wrong attribute** (2 cases): Compares director names instead of their nationality strings; references wrong person's doc.
+
+### Corrected G2 count
+
+| Category | n | Note |
+|---|---|---|
+| Non-trivial correct | 10 | Passes gate AND semantically correct |
+| Trivial correct (empty []) | 16 | Pure retrieval, no operator needed |
+| **Total correct formalization** | **26/72 (36.1%)** | |
+| Non-trivial SVSS (false passes) | 16 | Gate admits but semantically wrong |
+
+The 58.3% figure assumed all gate admits are correct; the manual review reduces this to **36.1%**.
+
+### G2 manual review verdict
+
+Per PREREG §7: *"STRUCTURALLY_VALID_SEMANTICALLY_WRONG is the DOMINANT failure mode even among ADMITted traces — that means the gate is manufacturing false confidence rather than adding real reliability, which is worse than doing nothing."*
+
+62% of non-trivial admits are SVSS — this triggers the §7 kill condition independent of the threshold.
+
+The root cause is structural: the gate validates that a span *exists in the doc* but cannot verify *which attribute* it represents. For bridge_comparison director-date questions, the model often picks a film year (which is a valid date in the film's own doc) instead of the director's birth/death year (which requires finding the director's biography doc). This is not a prompt-fixable failure — it requires the gate to verify attribute identity, which is beyond text-search provenance.
+
+**Registered conclusion: G2 killed.** The gate is manufacturing false confidence on the bridge_comparison type. The 36.1% correct-formalization rate also falls below the 50% promotion bar on its own.
+
+**Unregistered observation:** The comparison type performs well (8-10/22 genuinely correct) and the pure-retrieval compositional type performs correctly (16/25 empty arrays are correct). The SVSS problem is concentrated in bridge_comparison (14/16 SVSS cases). A gate extension that could distinguish film-year spans from director-attribute spans (e.g., requiring the model to chain through the director's biography doc explicitly) might rescue the approach for this type.
