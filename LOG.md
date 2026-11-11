@@ -214,3 +214,74 @@ However, the failure taxonomy reveals the bottleneck is **not model reasoning** 
 
 **Registered conclusion:** G2 kills by the strict spec. This is logged honestly.
 **Unregistered observation:** The failure is concentrated in a single, fixable interface layer. See route analysis (separate note).
+
+---
+
+## 2026-11-11: G2-prime-v2 — extended `_parse_date()` for natural-language dates
+
+Unregistered follow-on to G2-prime. Change: `_parse_date()` extended to handle
+"Month D, YYYY", "D Month YYYY", date ranges ("Date1 – Date2"), and concatenated
+multi-date strings ("25 October 1898 12 April 1979"). All bridge_comparison
+docs use these formats. 17 new tests added; all 69 tests pass.
+
+Same model (qwen2.5:7b), same input (sample_2wiki_decomposable.jsonl, n=72),
+same other fixes (text-search gate, no-offset schema, compositional few-shot).
+
+**Run:** `harness.py --mode A --endpoint http://localhost:11434/v1 --model qwen2.5:7b --input sample_2wiki_decomposable.jsonl --out runs/mode_a_qwen25_7b_v3.jsonl`
+
+### Results
+
+| Metric | Value |
+|---|---|
+| Total questions | 72 |
+| Parse success | 68/72 (94%) |
+| Gate ADMIT | **10/72 (13.9%)** |
+
+Failure taxonomy:
+
+| Category | n | % |
+|---|---|---|
+| TYPE_MISMATCH | 28 | 39% |
+| MISSING_STEP (empty array) | 17 | 24% |
+| PROVENANCE_SPAN_NOT_FOUND | 13 | 18% |
+| MISSING_STEP (parse fail) | 4 | 6% |
+
+By question type:
+
+| Type | n | ADMIT | TYPE_MISMATCH | SPAN_NOT_FOUND | MISSING_STEP |
+|---|---|---|---|---|---|
+| bridge_comparison | 25 | 2 | 15 | 6 | 2 |
+| comparison | 22 | 8 | 7 | 5 | 2 |
+| compositional | 25 | 0 | 6 | 2 | 17 |
+
+TYPE_MISMATCH by operator (remaining 28):
+
+| Operator | n | Root cause |
+|---|---|---|
+| conjoin | 16 | Model uses conjoin as generic comparison; conjoin expects bool args |
+| set_membership | 6 | Type mismatch in set membership checks |
+| temporal_order | 4 | Non-date args ("Paris", entity names) passed to temporal_order |
+| disjoin/numeric_compare | 2 | Operator misuse |
+
+### Comparison to prior runs
+
+| | G2 (7b) | G2-prime (7b) | G2-prime-v2 (7b) |
+|---|---|---|---|
+| Gate ADMIT | 0% | 6.9% | **13.9%** |
+| TYPE_MISMATCH | 49% | 51% | 39% |
+| SPAN_EXTRACTION_ERROR | 49% | 0% | 0% |
+| PROVENANCE_SPAN_NOT_FOUND | 15% | 15% | 18% |
+| MISSING_STEP (empty) | 36% | 22% | 24% |
+
+### Key observations
+
+1. **Date parsing fix worked**: TYPE_MISMATCH dropped 51%→39% and admits doubled 6.9%→13.9%. All targeted date formats ("Month D, YYYY", "D Month YYYY", ranges, multi-date) now parse correctly.
+2. **New dominant failure — conjoin misuse (16 cases)**: The model uses `conjoin` as a catch-all comparison operator rather than `entity_equal` or `temporal_order`. This is a prompt compliance failure — conjoin takes boolean args, not dates/entities.
+3. **bridge_comparison still hardest**: 2/25 admits. The model correctly structures the temporal_order step but then wraps it in a spurious `conjoin` or passes entity names to `temporal_order`.
+4. **Compositional still near-zero**: 0/25 admits. 17/25 empty arrays persists despite the compositional few-shot fix from G2-prime.
+
+### G2-prime-v2 verdict
+
+13.9% — still below 30% kill threshold, but the fix ladder is producing measurable gains (0% → 6.9% → 13.9%) each iteration. The bottleneck has shifted again: from offset precision (G2) → date parsing (G2-prime) → operator misuse in `conjoin` (v2).
+
+**Recommendation:** Add an explicit negative example in few-shot showing `conjoin` is for AND-ing booleans only, with `entity_equal` for entity comparison and `temporal_order` for the final date comparison. This targets the 16 conjoin TYPE_MISMATCH cases directly.
