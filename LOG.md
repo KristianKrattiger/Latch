@@ -100,6 +100,49 @@ This would be a **new, unregistered experiment** — log it separately if run.
 
 ---
 
+## 2026-11-11: G2-prime — text-search gate + no-offset schema + compositional example
+
+Unregistered follow-on to G2. Changes: (1) gate provenance switches to text-search
+(Route B), (2) span schema drops start/end (Route D), (3) compositional few-shot
+example replaced with entity_equal chain, pure-retrieval [] case moved to Example 4
+(Route C). Same input: sample_2wiki_decomposable.jsonl, n=72.
+
+### Results
+
+| | llama3.2:3b | qwen2.5:7b |
+|---|---|---|
+| Parse success | 49/72 (68%) | 69/72 (96%) |
+| Gate ADMIT | **3/72 (4.2%)** | **5/72 (6.9%)** |
+| SPAN_EXTRACTION_ERROR | 0 (eliminated ✓) | 0 (eliminated ✓) |
+| TYPE_MISMATCH | 18 (25%) | 37 (51%) |
+| PROVENANCE_SPAN_NOT_FOUND | 21 (29%) | 11 (15%) |
+| MISSING_STEP (empty array) | 0 | 16 (22%) |
+| MISSING_STEP (parse fail) | 23 (32%) | 3 (4%) |
+
+By question type (7b):
+
+| Type | n | ADMIT | TYPE_MISMATCH | SPAN_NOT_FOUND | MISSING_STEP |
+|---|---|---|---|---|---|
+| bridge_comparison | 25 | 1 | 22 | 2 | 0 |
+| comparison | 22 | 4 | 10 | 6 | 2 |
+| compositional | 25 | 0 | 5 | 3 | 17 |
+
+### Key observations
+
+1. **SPAN_EXTRACTION_ERROR eliminated**: The offset-matching failure mode is gone. The gate fix worked as intended.
+2. **New dominant failure — TYPE_MISMATCH on bridge_comparison (22/25 for 7b)**: The docs contain free-text dates ("October 5 1985", "March 10, 1892 – March 1, 1952") that don't parse as ISO 8601. `temporal_order` requires parseable dates — the gate correctly rejects these. This is an operator coverage gap, not a model failure.
+3. **PROVENANCE_SPAN_NOT_FOUND (11-21 cases)**: Text the model claims isn't literally in the doc — paraphrasing, truncating, or hallucinating spans. Real semantic errors, not mechanical ones.
+4. **Compositional MISSING_STEP partly fixed**: Empty arrays dropped 26→16 for 7b. The new few-shot example helped but 14/25 compositional still empty — the model may need more examples or the question type genuinely lacks a suitable operator chain.
+5. **Admits more than doubled** vs G2 (0→3 for 3b, 0→5 for 7b), all in comparison type.
+
+### G2-prime verdict
+
+6.9% admit on 7b — still below the 30% threshold. The fix ladder has revealed the next layer: date parsing. bridge_comparison is essentially blocked until `_parse_date()` can handle natural language date strings. Without that, 22/25 bridge_comparison questions will always TYPE_MISMATCH regardless of model scale or prompt quality.
+
+**Recommendation:** Extend `_parse_date()` to handle common non-ISO formats ("Month D YYYY", "D Month YYYY", date ranges "YYYY–YYYY") before another harness run. This is a gate engineering task, not a model task.
+
+---
+
 ## 2026-11-11: G2 mode A — qwen2.5:14b
 
 **Run:** `harness.py --mode A --model qwen2.5:14b --input sample_2wiki_decomposable.jsonl`
