@@ -76,13 +76,19 @@ class Context:
     """docs: mapping of doc_id -> full text of that document/paragraph."""
     docs: Dict[str, str]
 
-    def span_text(self, doc_id: str, start: int, end: int) -> Optional[str]:
+    def span_text(self, doc_id: str, text: str) -> Optional[str]:
+        """Returns `text` if it appears exactly once in the named doc,
+        None if doc not found or text not present, 'AMBIGUOUS' if it
+        appears at more than one non-overlapping position."""
         doc = self.docs.get(doc_id)
-        if doc is None:
+        if doc is None or not text:
             return None
-        if start < 0 or end > len(doc) or start >= end:
+        idx = doc.find(text)
+        if idx == -1:
             return None
-        return doc[start:end]
+        if doc.find(text, idx + len(text)) != -1:
+            return "AMBIGUOUS"
+        return text
 
 
 # ---------------------------------------------------------------------------
@@ -336,20 +342,20 @@ class Gate:
             return tval, None
 
         if arg["ref_type"] == "span":
-            doc_id, start, end = arg.get("doc_id"), arg.get("start"), arg.get("end")
-            if doc_id is None or start is None or end is None:
-                return None, Verdict(Status.REJECT, ReasonCode.SCHEMA_INVALID, message="span missing fields")
-            text = self.context.span_text(doc_id, start, end)
-            if text is None:
+            doc_id = arg.get("doc_id")
+            text_claimed = arg.get("text")
+            if doc_id is None or not text_claimed:
+                return None, Verdict(Status.REJECT, ReasonCode.SCHEMA_INVALID,
+                                      message="span missing doc_id or text")
+            # start/end are accepted but ignored — text-search is the provenance check
+            result = self.context.span_text(doc_id, text_claimed)
+            if result is None:
                 return None, Verdict(Status.REJECT, ReasonCode.PROVENANCE_SPAN_NOT_FOUND,
-                                      message=f"no such span {doc_id}[{start}:{end}]")
-            # the arg may also carry an expected literal "text" for a stronger provenance
-            # check (did the model's claimed span text match what's actually there?)
-            claimed = arg.get("text")
-            if claimed is not None and claimed != text:
-                return None, Verdict(Status.REJECT, ReasonCode.PROVENANCE_SPAN_TEXT_MISMATCH,
-                                      message=f"claimed {claimed!r} != actual {text!r}")
-            return self._coerce_span(text, expected_type)
+                                      message=f"{text_claimed!r} not found in {doc_id!r}")
+            if result == "AMBIGUOUS":
+                return None, Verdict(Status.ABSTAIN, ReasonCode.PROVENANCE_SPAN_NOT_FOUND,
+                                      message=f"{text_claimed!r} is ambiguous in {doc_id!r}")
+            return self._coerce_span(result, expected_type)
 
         return None, Verdict(Status.REJECT, ReasonCode.SCHEMA_INVALID, message=f"bad ref_type {arg['ref_type']!r}")
 

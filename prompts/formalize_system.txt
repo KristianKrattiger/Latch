@@ -16,13 +16,13 @@ Each step is an object:
 }
 
 Each <leaf> is either:
-  {"ref_type": "span", "doc_id": "<id from the context>", "start": <int>, "end": <int>, "text": "<the exact substring, for your own and the checker's benefit>"}
+  {"ref_type": "span", "doc_id": "<id from the context>", "text": "<the exact substring as it appears in that document>"}
   {"ref_type": "step", "step_id": "<a step_id you already emitted>"}
 
 Rules:
-- "start"/"end" are character offsets into the named document's text, EXACTLY as given
-  in the context block. Count characters carefully, including spaces and punctuation.
-- Never invent a span that doesn't literally appear at those offsets.
+- "text" must be an exact substring of the named document as it appears in the context.
+  Copy it verbatim — do not paraphrase, truncate, or normalize.
+- Never invent a span whose text does not literally appear in the named document.
 - Never reference a step_id you haven't already defined earlier in the array.
 - If the question requires combining more than one fact, use more than one step and
   reference the earlier step's step_id as an arg to the later step.

@@ -11,8 +11,8 @@ Output:
 [
   {"step_id": "s1", "operator": "temporal_order",
    "args": [
-     {"ref_type": "span", "doc_id": "p0", "start": 24, "end": 38, "text": "October 5 1985"},
-     {"ref_type": "span", "doc_id": "p1", "start": 24, "end": 34, "text": "1991-03-12"}
+     {"ref_type": "span", "doc_id": "p0", "text": "October 5 1985"},
+     {"ref_type": "span", "doc_id": "p1", "text": "1991-03-12"}
    ],
    "params": {"op": "before"}, "result_type": "bool", "is_final": false}
 ]
@@ -28,19 +28,27 @@ EXAMPLE 2
 Context:
 [p0] Empress Xu's husband was the Yongle Emperor.
 [p1] The Yongle Emperor was born in Nanjing.
+[p2] Emperor Hongxi was born in Nanjing.
 
-Question: What is the place of birth of Empress Xu's husband?
-Expected answer type: entity
+Question: Were Empress Xu's husband and Emperor Hongxi born in the same city?
+Expected answer type: bool
 
 Output:
-[]
+[
+  {"step_id": "s1", "operator": "entity_equal",
+   "args": [
+     {"ref_type": "span", "doc_id": "p1", "text": "Nanjing"},
+     {"ref_type": "span", "doc_id": "p2", "text": "Nanjing"}
+   ],
+   "result_type": "bool", "is_final": true}
+]
 
-(This question needs zero operator calls -- it's a pure two-hop bridge retrieval:
-find "husband" entity, then find that entity's birthplace. Per OPERATORS.md, bridge
-retrieval is not an operator; there is nothing for this gate to check beyond two span
-references. Emitting an empty array here is CORRECT, not a failure -- it tells the
-scoring harness "no operator needed, this is pure retrieval," which is a distinct,
-trackable category, not the same as "couldn't formalize it.")
+(This question has two retrieval hops — find husband, find birthplace — then one
+operator step: entity_equal on the two birthplaces. Use steps whenever the question
+ends in a comparison, count, or arithmetic operation, even if the retrieval leading
+up to it is implicit. Only emit [] when the question is PURE retrieval with no
+operator at the end — e.g. "What city was X born in?" has no operator and needs no
+steps. "Were X and Y born in the same city?" ends in entity_equal and needs a step.)
 
 EXAMPLE 3
 
@@ -54,8 +62,24 @@ Output:
 [
   {"step_id": "s1", "operator": "arithmetic",
    "args": [
-     {"ref_type": "span", "doc_id": "p0", "start": 32, "end": 36, "text": "5829"},
-     {"ref_type": "span", "doc_id": "p0", "start": 50, "end": 54, "text": "5735"}
+     {"ref_type": "span", "doc_id": "p0", "text": "5829"},
+     {"ref_type": "span", "doc_id": "p0", "text": "5735"}
    ],
    "params": {"op": "sub"}, "result_type": "number", "is_final": true}
 ]
+
+EXAMPLE 4
+
+Context:
+[p0] Empress Xu's husband was the Yongle Emperor.
+[p1] The Yongle Emperor was born in Nanjing.
+
+Question: What is the place of birth of Empress Xu's husband?
+Expected answer type: entity
+
+Output:
+[]
+
+(Pure retrieval: find "husband" entity, then find that entity's birthplace. There
+is no operator to apply — the answer is a span directly in the context. Emit an
+empty array. This is CORRECT, not a failure.)
