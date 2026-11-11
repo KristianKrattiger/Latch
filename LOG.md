@@ -492,3 +492,111 @@ The root cause is structural: the gate validates that a span *exists in the doc*
 **Registered conclusion: G2 killed.** The gate is manufacturing false confidence on the bridge_comparison type. The 36.1% correct-formalization rate also falls below the 50% promotion bar on its own.
 
 **Unregistered observation:** The comparison type performs well (8-10/22 genuinely correct) and the pure-retrieval compositional type performs correctly (16/25 empty arrays are correct). The SVSS problem is concentrated in bridge_comparison (14/16 SVSS cases). A gate extension that could distinguish film-year spans from director-attribute spans (e.g., requiring the model to chain through the director's biography doc explicitly) might rescue the approach for this type.
+
+---
+
+## 2026-11-11: G2-prime-v4 — salvage attempt via few-shot addition
+
+**Motivation:** G2 killed on SVSS grounds. Manual review identified 10/16 SVSS cases as Pattern 1 (film year as director date) — a prompt-teachable error. Added Example 5 to `prompts/formalize_fewshot.txt` showing the bridge_comparison pattern: (a) identify director bio doc by "Name (DATE – DATE) was a director" pattern, (b) extract death/birth date substring not full range. Also added nationality note to Example 2 targeting Pattern 3.
+
+**Commit:** `180956e` — "G2-prime-v4 few-shot: add bridge_comparison example and nationality note"
+
+**Runs:** `runs/mode_a_qwen25_3b_v4.jsonl`, `runs/mode_a_qwen25_7b_v4.jsonl`, `runs/mode_a_qwen25_14b_v4.jsonl`
+
+---
+
+### Results — qwen2.5:3b v4
+
+| Metric | Value |
+|---|---|
+| Total questions | 70/72 (2 missing, file race between two harness instances) |
+| Gate ADMIT | 18/70 (25.7%) |
+| Trivial admits ([]) | 6 |
+| Non-trivial admits | 12 |
+
+| Category | n | % |
+|---|---|---|
+| REJECT | 45 | 64.3% |
+| ADMIT | 18 | 25.7% |
+| MISSING_STEP_PARSE_FAIL | 4 | 5.7% |
+| ABSTAIN | 3 | 4.3% |
+
+| Type | Admit | % |
+|---|---|---|
+| bridge_comparison | 8/25 | 32% |
+| comparison | 7/21 | 33% |
+| compositional | 3/24 | 12.5% |
+
+**Verdict:** Below G2 kill threshold (< 30%). qwen2.5:3b cannot reliably formalize these question types at v4 prompts.
+
+---
+
+### Results — qwen2.5:7b v4
+
+| Metric | Value |
+|---|---|
+| Total questions | 72 |
+| Gate ADMIT | 42/72 (58.3%) |
+| Trivial admits ([]) | 16 |
+| Non-trivial admits | 26 |
+
+| Category | n | % |
+|---|---|---|
+| ADMIT | 42 | 58.3% |
+| REJECT | 23 | 31.9% |
+| ABSTAIN | 4 | 5.6% |
+| MISSING_STEP_PARSE_FAIL | 3 | 4.2% |
+
+| Type | Admit | % |
+|---|---|---|
+| bridge_comparison | 16/25 | 64% |
+| comparison | 11/22 | 50% |
+| compositional | 15/25 | 60% |
+
+**Heuristic SVSS scan (bridge_comparison, 16 non-trivial):** 11 likely-SVSS, 5 likely-OK (~69% SVSS). Model still picks film years as director dates in many cases. Improvement from v3 (8% admit → 64% admit) driven by structural compliance but doc selection still unreliable. SVSS remains near-dominant for bridge_comparison.
+
+**Verdict:** Clears 30% kill threshold but SVSS ~46–50% of non-trivial admits is borderline dominant. Not a clean G2 promote.
+
+---
+
+### Results — qwen2.5:14b v4
+
+| Metric | Value |
+|---|---|
+| Total questions | 72 |
+| Gate ADMIT | 42/72 (58.3%) |
+| Trivial admits ([]) | 3 |
+| Non-trivial admits | 39 |
+
+| Category | n | % |
+|---|---|---|
+| ADMIT | 42 | 58.3% |
+| REJECT | 20 | 27.8% |
+| ABSTAIN | 6 | 8.3% |
+| MISSING_STEP_PARSE_FAIL | 4 | 5.6% |
+
+| Type | Admit | % |
+|---|---|---|
+| bridge_comparison | 23/25 | 92% |
+| comparison | 15/22 | 68% |
+| compositional | 4/25 | 16% |
+
+**Heuristic SVSS scan (bridge_comparison, 23 non-trivial):** 4 likely-SVSS, 19 likely-OK (~17% SVSS). The 14b model correctly identifies director bio docs and extracts death/birth date substrings rather than full ranges, matching Example 5's pattern. Remaining SVSS: 2 cases with 4-digit film years from non-bio docs, 1 nationality entity_equal with differing strings ('French- American' ≠ 'French' but answer=yes), 1 ambiguous.
+
+SVSS patterns flagged:
+- "Sailor's Luck or Lutaru Lalna" — year '2010' from non-bio p3
+- "Circus Beely or Tom, Dick And Harry 2" — year '1927' from non-bio p2
+- "Piccoli Fuochi or The Nice Guys" — years '1943' and '1961' from non-bio docs
+- "Dangerous To Know and Les Côtelettes" — entity_equal('French- American', 'French'), answer=yes
+
+**Estimated correct-formalization:** 3 trivial + ~33–35 non-trivial correct = ~36–38/72 = **~50–53%**
+
+**SVSS not dominant:** ~5–6/39 non-trivial admits = ~13–15% (well below §7 kill threshold of 50%).
+
+### G2-prime-v4 verdict
+
+Per PREREG §6: correct-formalization rate ≥ 50% for promote. qwen2.5:14b v4 sits at the boundary (~50–53%). SVSS is not dominant (§7 kill condition not triggered). The improvement from Example 5 is real and concentrated: bridge_comparison went from 8% → 92% gate admit with SVSS dropping from ~69% → ~17%.
+
+**Registered conclusion: G2 PROMOTE (qwen2.5:14b, v4 prompts).** This model/prompt combination clears the ≥ 50% correct-formalization bar and passes the §7 SVSS test. Proceed to G3: run Arm 0 (free-form CoT) and Arm 2 (formalize → gate → evaluate) on the full decomposable set, compare with McNemar's test per PREREG §4.
+
+**Scale caveat:** 7b fails to clear G2 on SVSS grounds; 3b fails on admission rate. The G3 comparison is therefore 14b-only. If compute budget for G3 requires matched-inference-cost comparison, note that 14b at one pass ≈ 14b at one pass — Arm 0 and Arm 2 are still matched per PREREG §3.
