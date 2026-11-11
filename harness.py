@@ -78,8 +78,8 @@ def _estimate_tokens(text: str) -> int:
 
 
 def call_endpoint(base_url: str, model: str, messages: List[dict], mode: str,
-                   temperature: float = 0.2, max_tokens: int = 800,
-                   timeout: int = 120) -> CallRecord:
+                   temperature: float = 0.2, max_tokens: int = 2048,
+                   timeout: int = 300) -> CallRecord:
     """POSTs to {base_url}/chat/completions. base_url should NOT include the trailing
     path, e.g. 'http://localhost:11434/v1' or 'https://api.openai.com/v1'."""
     url = base_url.rstrip("/") + "/chat/completions"
@@ -116,6 +116,10 @@ def call_endpoint(base_url: str, model: str, messages: List[dict], mode: str,
         return CallRecord(model=model, mode=mode, forward_passes=1, input_tokens=0,
                            output_tokens=0, token_count_source="estimated",
                            wall_time_s=time.time() - t0, error=str(e))
+    except (TimeoutError, OSError) as e:
+        return CallRecord(model=model, mode=mode, forward_passes=1, input_tokens=0,
+                           output_tokens=0, token_count_source="estimated",
+                           wall_time_s=time.time() - t0, error=f"timeout: {e}")
     wall_time = time.time() - t0
 
     try:
