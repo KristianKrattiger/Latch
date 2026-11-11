@@ -100,12 +100,74 @@ This would be a **new, unregistered experiment** — log it separately if run.
 
 ---
 
-## 2026-11-11: G2 mode A — qwen2.5:14b (pending)
+## 2026-11-11: G2 mode A — qwen2.5:14b
 
-Run in progress. See `runs/mode_a_qwen25_14b.jsonl`.
+**Run:** `harness.py --mode A --model qwen2.5:14b --input sample_2wiki_decomposable.jsonl`
+**Output:** `runs/mode_a_qwen25_14b.jsonl` (n=72)
+
+### Results
+
+| Category | n | % |
+|---|---|---|
+| SPAN_EXTRACTION_ERROR (right text, wrong offsets) | 52 | **72%** |
+| WRONG_OPERANDS (text not in doc) | 11 | 15% |
+| MISSING_STEP (parse fail) | 6 | 8% |
+| MISSING_STEP (empty array) | 2 | 3% |
+| OTHER (PROVENANCE_SPAN_NOT_FOUND) | 1 | 1% |
+| **Gate ADMIT (non-trivial)** | **0** | **0%** |
+
+By question type:
+
+| Type | n | SPAN_EXTRACT_ERR | WRONG_OPERANDS | MISSING_STEP |
+|---|---|---|---|---|
+| bridge_comparison | 25 | 20 | 5 | 0 |
+| comparison | 22 | 20 | 1 | 1 |
+| compositional | 25 | 12 | 5 | 8 |
+
+### Key observations
+
+1. **Empty arrays eliminated**: Only 2 empty-step responses (vs 26 for 7b). The 14b model attempts formalization for compositional questions where 7b gave up.
+2. **SPAN_EXTRACTION_ERROR worsens with scale**: 33% (3b) → 49% (7b) → 72% (14b). Larger models try harder, pick semantically better text, but get *more* confident about wrong byte offsets.
+3. **Scale does not help offset precision**: This is the clearest evidence in the dataset. Character-level byte indexing is not a capability that improves with model scale.
 
 ---
 
-## 2026-11-11: G2 mode A — llama3.2:3b local re-run (pending)
+## 2026-11-11: G2 mode A — llama3.2:3b GPU re-run
 
-Re-running to confirm reproducibility on this GPU machine. See `runs/mode_a_llama32_v2.jsonl`.
+**Run:** `harness.py --mode A --model llama3.2:3b --input sample_2wiki_decomposable.jsonl`
+**Output:** `runs/mode_a_llama32_v2.jsonl` (n=72, GPU — original was CPU with 18 timeouts)
+
+### Results
+
+| Category | n | % |
+|---|---|---|
+| SPAN_EXTRACTION_ERROR (right text, wrong offsets) | 24 | 33% |
+| WRONG_OPERANDS (text not in doc) | 21 | 29% |
+| MISSING_STEP (parse fail) | 19 | 26% |
+| ARITY_MISMATCH | 5 | 7% |
+| OTHER (various) | 3 | 4% |
+| **Gate ADMIT (non-trivial)** | **0** | **0%** |
+
+Broadly reproduces the CPU run (23 parse fail, 18 SPAN_EXTRACTION_ERROR, 22 WRONG_OPERANDS). GPU eliminates timeout-driven parse failures but the failure profile is the same.
+
+---
+
+## 2026-11-11: Three-model summary — G2 failure taxonomy across scale
+
+| Failure mode | 3b (GPU) | 7b | 14b |
+|---|---|---|---|
+| SPAN_EXTRACTION_ERROR (right text, wrong offsets) | 24 (33%) | 35 (49%) | **52 (72%)** |
+| WRONG_OPERANDS (text not in doc) | 21 (29%) | 9 (12%) | 11 (15%) |
+| MISSING_STEP (parse fail) | 19 (26%) | 2 (3%) | 6 (8%) |
+| MISSING_STEP (empty array) | 0 (0%) | 26 (36%) | 2 (3%) |
+| Schema/arity/other errors | 8 (11%) | 0 (0%) | 1 (1%) |
+| **Gate ADMIT (non-trivial)** | **0** | **0** | **0** |
+
+### G2 verdict (all three models)
+
+All three models score 0% by strict gate admission. The registered kill threshold is < 30%. Per `PREREG.md` §7, G2 kill is confirmed when "trying a bigger model ALSO fails to clear 50%."
+
+However, the failure taxonomy reveals the bottleneck is **not model reasoning** — it is the gate's exact-offset provenance check. SPAN_EXTRACTION_ERROR *increases* with scale because larger models formalize more questions (fewer empty arrays, fewer parse failures) but cannot reliably compute character-level byte offsets. This is a gate interface problem, not a model capability problem.
+
+**Registered conclusion:** G2 kills by the strict spec. This is logged honestly.
+**Unregistered observation:** The failure is concentrated in a single, fixable interface layer. See route analysis (separate note).
