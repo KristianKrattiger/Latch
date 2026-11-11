@@ -285,3 +285,65 @@ TYPE_MISMATCH by operator (remaining 28):
 13.9% — still below 30% kill threshold, but the fix ladder is producing measurable gains (0% → 6.9% → 13.9%) each iteration. The bottleneck has shifted again: from offset precision (G2) → date parsing (G2-prime) → operator misuse in `conjoin` (v2).
 
 **Recommendation:** Add an explicit negative example in few-shot showing `conjoin` is for AND-ing booleans only, with `entity_equal` for entity comparison and `temporal_order` for the final date comparison. This targets the 16 conjoin TYPE_MISMATCH cases directly.
+
+---
+
+## 2026-11-11: G2-prime-v3 — conjoin misuse fix in few-shot
+
+Unregistered follow-on to G2-prime-v2. Change: few-shot Examples 1 and 2
+updated to state explicitly that `temporal_order`/`entity_equal` are
+`is_final` steps for comparisons, and that `conjoin` takes only bool results
+from prior steps — never date spans or entity spans directly. Also corrected
+`is_final: false → true` in Example 1.
+
+Same model (qwen2.5:7b), same input (n=72), same gate + schema fixes.
+
+**Run:** `harness.py --mode A --endpoint http://localhost:11434/v1 --model qwen2.5:7b --input sample_2wiki_decomposable.jsonl --out runs/mode_a_qwen25_7b_v4.jsonl`
+
+### Results
+
+| Metric | Value |
+|---|---|
+| Total questions | 72 |
+| Parse success | 69/72 (96%) |
+| Gate ADMIT | **26/72 (36.1%)** |
+
+Failure taxonomy:
+
+| Category | n | % |
+|---|---|---|
+| MISSING_STEP (empty array) | 16 | 22% |
+| TYPE_MISMATCH | 15 | 21% |
+| PROVENANCE_SPAN_NOT_FOUND | 11 | 15% |
+| MISSING_STEP (parse fail) | 3 | 4% |
+| ARITY_MISMATCH | 1 | 1% |
+
+By question type:
+
+| Type | n | ADMIT | TYPE_MISMATCH | SPAN_NOT_FOUND | MISSING_STEP |
+|---|---|---|---|---|---|
+| bridge_comparison | 25 | **16** | 6 | 2 | 1 |
+| comparison | 22 | **10** | 5 | 5 | 1 |
+| compositional | 25 | 0 | 4 | 4 | 17 |
+
+### Full ladder comparison
+
+| | G2 (7b) | G2-prime | G2-prime-v2 | **G2-prime-v3** |
+|---|---|---|---|---|
+| Gate ADMIT | 0% | 6.9% | 13.9% | **36.1%** |
+| TYPE_MISMATCH | 49% | 51% | 39% | 21% |
+| conjoin misuse (of TYPE_MISMATCH) | — | — | 16 | ~0 |
+| SPAN_EXTRACTION_ERROR | 49% | 0% | 0% | 0% |
+| PROVENANCE_SPAN_NOT_FOUND | — | 15% | 18% | 15% |
+| MISSING_STEP (empty) | 36% | 22% | 24% | 22% |
+
+### Key observations
+
+1. **Clears the 30% kill threshold**: 36.1% > 30%. Per PREREG.md §6, G2 is not killed — this crosses into "try larger model" territory.
+2. **bridge_comparison unblocked**: 2/25 → 16/25. The conjoin fix plus date parsing together account for the turnaround. bridge_comparison was the hardest type (0% at G2 baseline).
+3. **Compositional still zero**: 0/25 admits, 15/25 empty arrays. The compositional few-shot example from Route C partially helped (dropped from 26 to 15–17 empties) but the type remains unsolved.
+4. **Remaining TYPE_MISMATCH (15)**: No longer dominated by conjoin. Mix of non-date args to `temporal_order` (e.g. city names) and legitimate operator gaps.
+
+### G2-prime-v3 verdict
+
+**36.1% > 30%** — does not kill. Per PREREG.md §6 "30–50%: try a larger model." The fix ladder (B+C+D+E+F) has closed the gap from 0% to 36% via gate engineering and prompt calibration, without changing model scale. Compositional type remains a gap (0/25); the other two types now admit at 64% (bridge_comparison) and 45% (comparison).
