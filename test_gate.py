@@ -423,6 +423,120 @@ class TestAdversarialEdgeCases(unittest.TestCase):
         v = g.step({"step_id": "s1", "operator": "negate", "args": [{"doc_id": "p1"}]})
         self.assertEqual(v.reason_code, ReasonCode.SCHEMA_INVALID)
 
+
+class TestParseDateNaturalLanguage(unittest.TestCase):
+    """_parse_date() must handle the free-text date formats seen in
+    2WikiMultihopQA bridge_comparison docs."""
+
+    def _parse(self, s):
+        from gate import _parse_date
+        return _parse_date(s)
+
+    # --- ISO / structured (regression) ---
+
+    def test_iso_ymd(self):
+        d, prec = self._parse("1991-03-12")
+        self.assertEqual(d.year, 1991)
+        self.assertEqual(d.month, 3)
+        self.assertEqual(prec, "day")
+
+    def test_iso_year_only(self):
+        d, prec = self._parse("1935")
+        self.assertEqual(d.year, 1935)
+        self.assertEqual(prec, "year")
+
+    # --- "Month D, YYYY" ---
+
+    def test_month_day_year_with_comma(self):
+        d, prec = self._parse("August 3, 1927")
+        self.assertEqual((d.year, d.month, d.day), (1927, 8, 3))
+        self.assertEqual(prec, "day")
+
+    def test_month_day_year_november(self):
+        d, prec = self._parse("November 15, 1977")
+        self.assertEqual((d.year, d.month, d.day), (1977, 11, 15))
+
+    def test_month_day_year_no_comma(self):
+        d, prec = self._parse("October 5 1985")
+        self.assertEqual((d.year, d.month, d.day), (1985, 10, 5))
+        self.assertEqual(prec, "day")
+
+    # --- "D Month YYYY" ---
+
+    def test_day_month_year(self):
+        d, prec = self._parse("9 May 1926")
+        self.assertEqual((d.year, d.month, d.day), (1926, 5, 9))
+        self.assertEqual(prec, "day")
+
+    def test_day_month_year_two_digit(self):
+        d, prec = self._parse("17 November 1950")
+        self.assertEqual((d.year, d.month, d.day), (1950, 11, 17))
+
+    def test_day_month_year_september(self):
+        d, prec = self._parse("20 September 1975")
+        self.assertEqual((d.year, d.month, d.day), (1975, 9, 20))
+
+    # --- Date ranges: take first date ---
+
+    def test_date_range_em_dash(self):
+        # "March 10, 1892 – March 1, 1952" → 1892-03-10
+        d, prec = self._parse("March 10, 1892 – March 1, 1952")
+        self.assertEqual((d.year, d.month, d.day), (1892, 3, 10))
+        self.assertEqual(prec, "day")
+
+    def test_date_range_hyphen(self):
+        d, prec = self._parse("1892-03-10 - 1952-03-01")
+        self.assertEqual((d.year, d.month, d.day), (1892, 3, 10))
+
+    def test_year_range(self):
+        # "1892–1952" → year precision, 1892
+        d, prec = self._parse("1892–1952")
+        self.assertEqual(d.year, 1892)
+        self.assertEqual(prec, "year")
+
+    # --- Multi-date strings: take first date ---
+
+    def test_multi_date_string(self):
+        # "25 October 1898 12 April 1979" → 1898-10-25
+        d, prec = self._parse("25 October 1898 12 April 1979")
+        self.assertEqual((d.year, d.month, d.day), (1898, 10, 25))
+
+    # --- Non-dates must return None ---
+
+    def test_non_date_returns_none(self):
+        self.assertIsNone(self._parse("Dallas 362"))
+
+    def test_non_date_movie_title_returns_none(self):
+        self.assertIsNone(self._parse("Revenge of the Nerds III"))
+
+    # --- Gate integration: temporal_order with natural-language dates ---
+
+    def test_temporal_order_natural_language_month_day_year(self):
+        g = Gate(ctx(p1="August 3, 1927", p2="November 15, 1977"))
+        v = g.step({"step_id": "s1", "operator": "temporal_order",
+                    "args": [span("p1", "August 3, 1927"), span("p2", "November 15, 1977")],
+                    "params": {"op": "before"}})
+        self.assertEqual(v.status, Status.ADMIT)
+        self.assertTrue(v.value)
+
+    def test_temporal_order_natural_language_day_month_year(self):
+        g = Gate(ctx(p1="9 May 1926", p2="17 November 1950"))
+        v = g.step({"step_id": "s1", "operator": "temporal_order",
+                    "args": [span("p1", "9 May 1926"), span("p2", "17 November 1950")],
+                    "params": {"op": "before"}})
+        self.assertEqual(v.status, Status.ADMIT)
+        self.assertTrue(v.value)
+
+    def test_temporal_order_range_string_takes_first(self):
+        # "March 10, 1892 – March 1, 1952" vs "1991-03-12"
+        g = Gate(ctx(p1="March 10, 1892 – March 1, 1952", p2="1991-03-12"))
+        v = g.step({"step_id": "s1", "operator": "temporal_order",
+                    "args": [span("p1", "March 10, 1892 – March 1, 1952"),
+                             span("p2", "1991-03-12")],
+                    "params": {"op": "before"}})
+        self.assertEqual(v.status, Status.ADMIT)
+        self.assertTrue(v.value)
+
     def test_span_missing_doc_id_rejected(self):
         g = Gate(ctx(p1="true"))
         v = g.step({"step_id": "s1", "operator": "negate",

@@ -115,15 +115,75 @@ TRANSITIVE_RELATIONS = {"located_in", "part_of", "subclass_of"}
 
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m", "%Y")
 
+# Natural-language date formats seen in 2WikiMultihopQA bridge_comparison docs.
+# All produce day precision.
+_NL_DATE_FORMATS = (
+    "%B %d, %Y",   # August 3, 1927
+    "%B %d %Y",    # August 3 1927  (no comma)
+    "%d %B %Y",    # 9 May 1926
+    "%d %b %Y",    # 9 May 1926 (abbreviated month)
+)
+
+# Range separators that appear in birth/death date strings.
+# Excludes bare "-" to avoid splitting ISO dates like "1991-03-12".
+_RANGE_SEPS = (" – ", " - ", "–")
+
+
+def _split_range_first(s: str) -> str:
+    """Return the portion of s before the first range separator, or s itself."""
+    for sep in _RANGE_SEPS:
+        idx = s.find(sep)
+        if idx > 0:
+            return s[:idx].strip()
+    return s
+
 
 def _parse_date(s: str) -> Optional[Tuple[datetime.date, str]]:
-    """Returns (date, precision) where precision in {'day','month','year'}."""
+    """Returns (date, precision) where precision in {'day','month','year'}.
+
+    Handles ISO 8601 (Y-M-D, Y-M, Y), natural-language formats (Month D YYYY,
+    D Month YYYY), and date-range strings (takes the first date).
+    """
+    s = s.strip()
+
+    # Try ISO / structured formats on the raw string first so we never
+    # misinterpret the hyphens in "1991-03-12" as a range separator.
     for fmt, prec in zip(DATE_FORMATS, ("day", "month", "year")):
         try:
-            d = datetime.datetime.strptime(s.strip(), fmt).date()
+            d = datetime.datetime.strptime(s, fmt).date()
             return d, prec
         except ValueError:
             continue
+
+    # For natural-language strings: take only the first date from a range
+    # ("March 10, 1892 – March 1, 1952") or a concatenated multi-date string
+    # ("25 October 1898 12 April 1979").  We rely on the range separators and
+    # on the year boundary — after the first 4-digit year token the string
+    # either ends or continues with a second date we don't want.
+    import re as _re
+    # Strip anything after the first year that is followed by more words/digits
+    # (catches "25 October 1898 12 April 1979" → "25 October 1898").
+    s = _re.sub(r'(\d{4})\s+\S.*$', lambda m: m.group(1), s).strip()
+    # Then take the pre-range portion (handles "1892–1952" or "Date1 – Date2").
+    s = _split_range_first(s)
+
+    # Retry ISO formats on the cleaned string (handles "1892-03-10 - 1952-03-01"
+    # → "1892-03-10", and year-range "1892–1952" → "1892").
+    for fmt, prec in zip(DATE_FORMATS, ("day", "month", "year")):
+        try:
+            d = datetime.datetime.strptime(s, fmt).date()
+            return d, prec
+        except ValueError:
+            continue
+
+    # Natural-language formats (all day precision).
+    for fmt in _NL_DATE_FORMATS:
+        try:
+            d = datetime.datetime.strptime(s, fmt).date()
+            return d, "day"
+        except ValueError:
+            continue
+
     return None
 
 
