@@ -600,3 +600,63 @@ Per PREREG §6: correct-formalization rate ≥ 50% for promote. qwen2.5:14b v4 s
 **Registered conclusion: G2 PROMOTE (qwen2.5:14b, v4 prompts).** This model/prompt combination clears the ≥ 50% correct-formalization bar and passes the §7 SVSS test. Proceed to G3: run Arm 0 (free-form CoT) and Arm 2 (formalize → gate → evaluate) on the full decomposable set, compare with McNemar's test per PREREG §4.
 
 **Scale caveat:** 7b fails to clear G2 on SVSS grounds; 3b fails on admission rate. The G3 comparison is therefore 14b-only. If compute budget for G3 requires matched-inference-cost comparison, note that 14b at one pass ≈ 14b at one pass — Arm 0 and Arm 2 are still matched per PREREG §3.
+
+---
+
+## 2026-11-11: G3 — Arm 0 vs Arm 2, qwen2.5:14b v4, full decomposable set
+
+**Registered experiment per PREREG §4.** Model: qwen2.5:14b, prompts: v4, dataset: sample_2wiki_decomposable.jsonl, n=72.
+
+- **Arm 0** (Mode C, free-form CoT): `harness.py --mode C --endpoint http://localhost:11434/v1 --model qwen2.5:14b --input sample_2wiki_decomposable.jsonl --out runs/arm0_14b_v4.jsonl`
+- **Arm 2** (Mode B, formalize→gate→value): `harness.py --mode B --endpoint http://localhost:11434/v1 --model qwen2.5:14b --input sample_2wiki_decomposable.jsonl --out runs/arm2_14b_v4.jsonl`
+
+Scoring: manual review with heuristic auto-match assist (`review_g3.py`). Arm 2 verdict: 72 questions, 32 admits scored (27 correct / 5 wrong), 40 abstains treated per PREREG as "not answered." Arm 0: all 72 scored by human review (58 correct / 14 wrong).
+
+### Results
+
+| Metric | Arm 0 (CoT) | Arm 2 (Gate) |
+|---|---|---|
+| Accuracy (full coverage, n=72) | **58/72 = 80.6%** | 27/72 = 37.5% |
+| Accuracy (admitted only) | — | 27/32 = 84.4% |
+| Abstain rate | 0% | 40/72 = **55.6%** |
+| Coverage | 1.00 | 0.44 |
+| Risk at coverage | 0.194 | 0.156 |
+
+McNemar 2×2 (restricted to 32 questions where both arms answered):
+
+|  | Arm2 correct | Arm2 wrong |
+|---|---|---|
+| Arm0 correct | 25 | 4 |
+| Arm0 wrong | 2 | 1 |
+
+McNemar chi² (continuity corrected, b=4, c=2, n=32) = 0.167, p >> 0.05 (non-significant).
+
+Accuracy difference (Arm2 − Arm0, full coverage): **−43.1pp**. Promotion bar requires +15pp; result is −43.1pp in the wrong direction.
+
+### Failure analysis
+
+Arm 2 abstains on 55.6% of questions. The abstain rate is caused by:
+- **55% gate abstain** (formalization fails to pass gate): model still fails to formalize many compositional/comparison questions into valid step JSON
+- On admitted questions: Arm 2 precision (84.4%) modestly exceeds Arm 0 (80.6%), confirming the gate does filter incorrect formalizations — but the coverage cost is prohibitive
+
+The 5 Arm 2 wrong cases were gate-admits with wrong semantics:
+- Wrong bio doc selected (film doc used instead of director bio doc)
+- entity_equal string mismatch where answer is semantically yes ('French-American' ≠ 'French')
+- Completely wrong doc retrieved
+
+Arm 0 wrong cases (14): predominantly nationality same/different comparison (3 wrong), date/place extraction where CoT was unable to retrieve correct fact from context (11 wrong).
+
+Risk-coverage curve:
+- Arm 0: (coverage=1.00, risk=0.194) — single operating point
+- Arm 2: (coverage=0.44, risk=0.156) — lower risk on admitted set, but far less coverage
+- Arm 2 at full coverage (abstain=wrong): (coverage=1.00, risk=0.625) — dramatically worse
+
+### G3 verdict
+
+Per PREREG §4: primary metric is McNemar test on 2×2 table, promotion bar ≥ +15pp with p < 0.05.
+
+**Registered conclusion: G3 KILL.** Arm 2 fails to meet the promotion bar. Full-coverage accuracy is −43.1pp below Arm 0 (37.5% vs 80.6%). McNemar on the jointly-answered subset is non-significant (chi²=0.167). The gate-based architecture cannot achieve the coverage needed to compete with free-form CoT on this task distribution.
+
+**Root cause:** The formalization step has ~44% coverage (admits 32/72). The 56% that abstain are questions the LLM cannot reliably formalize into valid gate-passing step JSON. Arm 0 handles these trivially. The gate's precision benefit (+4pp on admitted set) does not compensate for the coverage penalty.
+
+**Latch pilot final status: KILLED.** Neither the gate engineering changes (G2-prime) nor the best available model (qwen2.5:14b) nor improved few-shot examples (v4) are sufficient to make the gate-based approach competitive with free-form CoT on the full 2WikiMultihopQA decomposable question set.
