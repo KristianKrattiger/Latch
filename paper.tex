@@ -1,0 +1,551 @@
+\documentclass[11pt]{article}
+
+% ─── Packages ────────────────────────────────────────────────────────────────
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
+\usepackage{natbib}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{url}
+\usepackage{array}
+\usepackage{tabularx}
+
+% ─── Typography ───────────────────────────────────────────────────────────────
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\renewcommand{\ttdefault}{cmtt}
+
+% ─── Custom commands ─────────────────────────────────────────────────────────
+\newcommand{\armi}{\textsc{Arm\,0}}
+\newcommand{\armii}{\textsc{Arm\,2}}
+\newcommand{\latch}{\textsc{Latch}}
+\newcommand{\svss}{\textsc{svss}}
+\newcommand{\mcnem}{McNemar}
+\newcommand{\pval}[1]{$p\!=\!#1$}
+\newcommand{\chisq}[1]{$\chi^2(1)\!=\!#1$}
+
+\definecolor{resultblue}{HTML}{2563EB}
+\definecolor{resultamber}{HTML}{D97706}
+
+% ─── Title block ─────────────────────────────────────────────────────────────
+\title{When Gates Abstain Too Often: Typed Operator Gates\\
+       Fail to Beat Chain-of-Thought on Multi-Hop QA}
+
+\author{Kristian Krattiger\\
+        Independent Researcher\\
+        \texttt{kristiankratt@gmail.com}}
+
+\date{November 2026}
+
+\begin{document}
+\maketitle
+
+% ─── Abstract ─────────────────────────────────────────────────────────────────
+\begin{abstract}
+We report a negative result from the \latch{} pilot, a preregistered study
+comparing a typed-operator gate (Arm~2) against direct chain-of-thought
+generation (Arm~0) on the 2WikiMultihopQA decomposable-question subset.
+Arm~2 formalises each question as a typed JSON step schema and admits
+it only when provenance, schema conformance, and operator-type consistency
+all pass.  On $n{=}72$ manually scored questions, \armi{} achieves
+80.6\% accuracy at full (100\%) coverage.  \armii{} achieves only 37.5\%
+full-coverage accuracy ($-43.1$ pp) because it abstains on 55.6\% of
+questions; among the 32 questions it does admit, precision reaches 84.4\%.
+A preregistered \mcnem{} test on the jointly-answered subset
+yields \chisq{0.67}, \pval{0.41}—far from the \mbox{+15 pp} and $p<0.05$
+bar required for promotion.  Per-type analysis shows the abstain
+failure is total on \emph{compositional} questions (92\% abstain, 0\%
+precision on 2 admits, 0\% full-coverage accuracy), and partial on
+\emph{bridge\_comparison} and \emph{comparison} types (68–59\% coverage,
+88–92\% precision when admitted).  We identify high abstention, not low
+precision, as the decisive failure mode, and discuss implications for
+hard symbolic gates in a neurosymbolic multi-hop pipeline.
+\end{abstract}
+
+% ─── 1. Introduction ──────────────────────────────────────────────────────────
+\section{Introduction}
+\label{sec:intro}
+
+Multi-hop question answering requires chaining several inference steps whose
+individual correctness can in principle be verified independently.  This
+structural property motivates neurosymbolic approaches
+\citep{logicLM,LINC,satlm,faithfulCoT,proofOfThought}: rather than relying on
+a language model to chain all steps implicitly, one can require the model to
+\emph{formalise} its reasoning as a typed intermediate representation,
+then \emph{verify} each step mechanically before accepting the answer.
+
+The appeal is clear.  If formalisation succeeds, a symbolic verifier can
+catch semantic errors that a soft evaluator might miss.  The two-module
+structure---formaliser plus gate---also separates concerns: the gate can be
+improved independently of the LLM, and its decisions are auditable.
+
+The \latch{} pilot tests whether this advantage materialises in practice on
+2WikiMultihopQA \citep{2wikimultihopqa}.  We define:
+
+\begin{itemize}[leftmargin=*,noitemsep]
+  \item \textbf{\armi{} (baseline)}: direct chain-of-thought generation,
+        no gate.
+  \item \textbf{\armii{} (treatment)}: LLM formaliser (Qwen2.5-14B with
+        few-shot examples) produces a typed JSON step schema; a symbolic gate
+        checks provenance, schema validity, and operator-type consistency.
+        Only questions that pass all checks are admitted; the rest abstain.
+\end{itemize}
+
+We preregistered a promotion criterion of $+15$ pp full-coverage accuracy
+\emph{and} $p < 0.05$ on a \mcnem{} test.  The gate does not meet either
+criterion and the pilot is killed.
+
+This paper makes the following contributions:
+\begin{enumerate}[leftmargin=*,noitemsep]
+  \item A clean negative result under a preregistered protocol, filling a
+        gap in the neurosymbolic literature where positive results are
+        over-represented.
+  \item An empirical diagnosis of the failure: high abstention on
+        compositional question types, not low precision on admitted ones.
+  \item A coverage--precision analysis showing the gate's tradeoff point
+        (44.4\% coverage, 15.6\% risk) versus the baseline (100\% coverage,
+        19.4\% risk).
+  \item A discussion of when hard symbolic gates can and cannot be
+        expected to help on multi-hop QA.
+\end{enumerate}
+
+% ─── 2. Related Work ──────────────────────────────────────────────────────────
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Neurosymbolic single-model reasoning.}
+Several systems address reasoning by coupling an LLM formaliser with a
+symbolic solver.  Logic-LM \citep{logicLM} maps natural language to a
+symbolic program, executes it with a solver, and iterates with
+self-refinement, gaining $+39.2$\% over plain LLM and $+18.4$\% over CoT
+on logical-reasoning benchmarks.  LINC \citep{LINC} translates to first-order
+logic and uses Prover9; on ProofWriter, a 15.5B open model plus LINC beats
+GPT-3.5/GPT-4 CoT.  SatLM \citep{satlm} emits SAT/SMT specifications
+solved by Z3, achieving state-of-the-art on LSAT and BoardgameQA.
+Faithful CoT \citep{faithfulCoT} compiles natural language to a symbolic
+chain before invoking a solver, outperforming CoT on 9 of 10 benchmarks.
+Proof of Thought \citep{proofOfThought} uses a JSON DSL mapped to FOL and
+verified by Z3---the closest analogue to \latch{}'s JSON step schema plus
+gate.  Programme-of-thought approaches (PAL \citep{pal}, PoT \citep{pot})
+let the LLM write Python executed by an interpreter, gaining $+15$ pp on
+GSM8K.  DecomP \citep{decomp} decomposes questions into typed sub-tasks
+dispatched to a handler library, the closest precedent for typed handler
+dispatch.
+
+Notably, \citet{robustnessNeurosym} find that neurosymbolic reasoners are
+more robust to perturbation but sometimes score lower overall than pure
+LLM baselines---a genuine negative result that partially anticipates ours.
+
+\paragraph{Multi-agent coordination and failure.}
+Multi-agent debate (MAD) literature has consistently found it difficult to
+beat simple baselines: \citet{goingMAD} show MAD does not reliably outperform
+self-consistency; \citet{ifMAD} confirm across five MAD methods and nine
+benchmarks.  MAST \citep{mast} analyses 14 multi-agent system failure modes
+and finds 79\% arise from specification and coordination problems, not raw
+capability---consistent with our finding that the gate's high abstention
+rate reflects a coordination mismatch between formaliser and verifier.
+ORCH \citep{orch} reports a deterministic orchestration approach that does
+beat single models (0.94 vs.\ 0.44 on GSM8K), suggesting structural gains
+are possible but highly sensitive to task type.
+
+\paragraph{Gate mechanisms: hard versus soft.}
+DebateCoder \citep{debateCoder} applies a soft 95\%-confidence gate to
+Pangu-1B code generation, achieving 70.12\% Pass@1 on HumanEval.  VPR
+\citep{vpr} uses symbolic oracles as an RL training signal (not an
+inference gate).  The survey by \citet{trustButVerify} identifies hard
+vs.\ soft gate as a named design axis; \citet{generateFilter} explicitly
+names ``hard semantic gates'' in the RLVR literature.  Our work provides
+empirical data on how a hard gate degrades coverage on a natural-language
+task where the formalisation itself is generated by an LLM.
+
+\paragraph{Error correlation.}
+Since \armi{} and \armii{} share the same backbone LLM (the formaliser is
+Qwen2.5-14B; the CoT generator is also Qwen-family), correlated errors
+are expected.  \citet{llmsJury} measure within-model error correlation at
+$\bar\rho = 0.68$, same-family at 0.52.  \citet{correlatedErrors} find
+60\% agreement when two LLMs both err.  \citet{nineJudges} show nine
+frontier LLMs provide only about two effective independent votes on NLI.
+These findings explain the tight \mcnem{} concordance table we observe
+(§\ref{sec:results}).
+
+\paragraph{Step-level deductive verification.}
+Natural Program \citep{naturalProgram} decomposes CoT into minimal-premise
+steps and uses an LM to judge entailment---a soft analogue to our hard
+mechanical gate.  \citet{swrv} apply a Z3 verifier to Llama-3-8B CoT,
+reporting 0.078 F1 and 72\% solver success---confirming that mechanical
+verification of LLM-generated proofs is fragile.  The LLMSR@XLLM25
+shared task \citep{llmsrTask,llmsrFifth,llmsrThird} provides further
+evidence from the structured reasoning community.
+
+% ─── 3. Gate Design ───────────────────────────────────────────────────────────
+\section{The \latch{} Gate Design}
+\label{sec:design}
+
+\subsection{Step Schema}
+
+The formaliser maps each question to a \emph{step schema}: a JSON object
+listing a sequence of typed operator invocations.  Each step has a type,
+input references (either direct evidence spans or prior step outputs), and
+an expected output.  The four operators are:
+
+\begin{description}[leftmargin=*,noitemsep]
+  \item[\texttt{entity\_equal}] Checks whether two entity references refer
+    to the same real-world entity.
+  \item[\texttt{temporal\_order}] Verifies a before/after claim between
+    two dated events, grounded in evidence spans.
+  \item[\texttt{arithmetic}] Performs a numeric calculation over values
+    extracted from spans, returning a number or comparison.
+  \item[\texttt{conjoin}] Combines two or more atomic results into a
+    composite claim, allowing multi-hop chains.
+\end{description}
+
+Evidence spans are required to be verbatim substrings of the referenced
+document (\emph{text-search provenance}, introduced in G2-prime to close a
+loophole exploited by the 7B model in G2).
+
+\subsection{Gate Logic}
+
+The gate emits one of three verdicts:
+
+\begin{description}[leftmargin=*,noitemsep]
+  \item[\textsc{admit}] All steps pass provenance, schema-conformance, and
+    operator-type checks; the pipeline returns the step chain's output as the
+    answer.
+  \item[\textsc{reject}] One or more steps fail.  The gate records a failure
+    code: \texttt{TYPE\_MISMATCH}, \texttt{PROVENANCE\_SPAN\_NOT\_FOUND},
+    \texttt{UNADMITTED\_STEP\_REF}, or \texttt{SCHEMA\_ERROR}.
+  \item[\textsc{abstain}] The formaliser produced no parseable schema
+    (\texttt{PARSE\_FAIL}) or an empty step list (\texttt{EMPTY\_STEPS}).
+\end{description}
+
+For this study, only \textsc{admit} produces an answer.
+Both \textsc{reject} and \textsc{abstain} count as no-answer (hence reduce
+coverage).
+
+\subsection{Engineering History}
+
+The gate underwent three development rounds before the formal experiment:
+
+\begin{itemize}[leftmargin=*,noitemsep]
+  \item \textbf{G1} (abandoned): Initial prototype on a 3B model; formalisation
+    too weak to yield reliable step schemas.
+  \item \textbf{G2} (killed under §7 SVSS rule): 7B model, text-search
+    provenance.  Manual review found 62\% of non-trivial admits had
+    correct gate verdicts but wrong semantics (\svss{}), indicating the gate
+    was permissive rather than discriminating.
+  \item \textbf{G2-prime} (promoted to formal test): 14B model (Qwen2.5-14B),
+    v4 few-shot prompt with \emph{bridge\_comparison} and nationality-inference
+    examples.  SVSS dropped to $\approx\!15\%$; correct-formalisation rate
+    reached $\approx\!50\%$.
+\end{itemize}
+
+% ─── 4. Experimental Setup ────────────────────────────────────────────────────
+\section{Experimental Setup}
+\label{sec:setup}
+
+\subsection{Dataset}
+
+We sample 72 questions from the \emph{decomposable} subset of
+2WikiMultihopQA \citep{2wikimultihopqa}, stratified by question type.
+The final sample comprises 25 \emph{bridge\_comparison}, 22
+\emph{comparison}, and 25 \emph{compositional} questions.
+
+\subsection{Evaluation Protocol}
+
+Both arms run on the same 72 questions.  Answers are manually scored as
+\textsc{correct} or \textsc{wrong} by the first author using reference
+answers and supporting Wikipedia paragraphs.
+
+\paragraph{Preregistration.}  The evaluation plan was filed in
+\texttt{PREREG.md} before any G3 runs.  The promotion criterion is:
+
+\[
+\text{full-coverage accuracy}(\text{\armii{}}) -
+\text{full-coverage accuracy}(\text{\armi{}}) \geq +15\,\text{pp}
+\quad\textbf{AND}\quad p < 0.05
+\]
+
+on a one-tailed \mcnem{} test over jointly-answered questions.
+
+\paragraph{Primary metric.}  The \mcnem{} test \citep{mcnemar1947} is applied
+to the $n_\text{joint}=32$ questions where \armii{} did not abstain.
+Full-coverage accuracy---correct answers divided by total questions---is the
+secondary metric reported for each arm.
+
+\paragraph{Coverage and risk.}  Coverage is the fraction of questions for
+which an arm produces an answer.  Risk is the error rate among answered
+questions: $\text{risk} = \text{wrong} / \text{answered}$.
+
+\subsection{Structurally Valid, Semantically Wrong (\svss{})}
+
+A step schema that passes all gate checks yet answers the wrong question is
+flagged as \svss{}.  Under the preregistered §7 kill rule, any pilot with
+$>50\%$ \svss{} among non-trivial admits is killed before the formal \mcnem{}
+test.  G2 was killed under this rule; G3 passed it (G2-prime SVSS $\approx 15\%$).
+
+% ─── 5. Results ───────────────────────────────────────────────────────────────
+\section{Results}
+\label{sec:results}
+
+\subsection{Overall Accuracy}
+
+Table~\ref{tab:main} summarises the main results.  \armi{} achieves
+80.6\% accuracy at full coverage.  \armii{} admits 32 of 72 questions
+(44.4\%) and achieves 84.4\% precision on those admits, but its full-coverage
+accuracy is only 37.5\%---a deficit of $-43.1$ pp relative to \armi{}.
+
+\begin{table}[h]
+\centering
+\caption{Main results on 2WikiMultihopQA decomposable questions ($n=72$).
+  \emph{Full-coverage accuracy} counts correct answers over all 72 questions.
+  \emph{Precision} counts correct answers over questions admitted (answered).}
+\label{tab:main}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Arm} & \textbf{Coverage} & \textbf{Precision} & \textbf{Full-cov.\ acc.} & \textbf{Abstain} \\
+\midrule
+\armi{} (CoT)   & 100.0\% (72/72) & 80.6\% & \textbf{80.6\%} & 0 \\
+\armii{} (Gate) & 44.4\% (32/72)  & 84.4\% & 37.5\% & 40 (55.6\%) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{\mcnem{} Test}
+
+The \mcnem{} test is applied to the 32 questions admitted by \armii{}.
+Table~\ref{tab:mcnemar} shows the 2$\times$2 contingency table.
+
+\begin{table}[h]
+\centering
+\caption{\mcnem{} contingency table on jointly-answered questions ($n_\text{joint}=32$).
+  Discordant cells: $b=4$ (\armi{} only correct), $c=2$ (\armii{} only correct).}
+\label{tab:mcnemar}
+\begin{tabular}{lcc}
+\toprule
+ & \textbf{\armii{} Correct} & \textbf{\armii{} Wrong} \\
+\midrule
+\textbf{\armi{} Correct} & 25 & 4 \\
+\textbf{\armi{} Wrong}   & 2  & 1 \\
+\bottomrule
+\end{tabular}
+\vspace{2pt}
+\footnotesize{$\chi^2(1)=0.667$, $p=0.41$. 40 abstentions excluded.}
+\end{table}
+
+The discordant pair $(b{=}4,\,c{=}2)$ yields $\chi^2(1) = (b-c)^2/(b+c) = 4/6 = 0.667$,
+$p = 0.41$.  This is far below the critical value $\chi^2_{0.05}(1) = 3.84$
+and fails the preregistered promotion criterion on both grounds.
+
+\subsection{Per-Type Breakdown}
+
+Table~\ref{tab:pertype} shows accuracy broken down by question type.
+The gate's behaviour differs sharply across types.
+
+\begin{table}[h]
+\centering
+\caption{Per-type accuracy. \emph{Cov} = coverage (admitted / total).
+  \emph{Prec} = precision when admitted (correct / admitted).
+  \emph{Full} = full-coverage accuracy (correct / total).}
+\label{tab:pertype}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Type} & $n$ & \multicolumn{2}{c}{\armi{}} & \multicolumn{3}{c}{\armii{}} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-7}
+              &     & Full   & — & Cov    & Prec   & Full \\
+\midrule
+bridge\_comparison & 25 & 96.0\% & — & 68.0\% & 88.2\% & 60.0\% \\
+comparison         & 22 & 86.4\% & — & 59.1\% & 92.3\% & 54.5\% \\
+compositional      & 25 & 60.0\% & — &  8.0\% &  0.0\% &  0.0\% \\
+\midrule
+\textbf{Overall}   & 72 & 80.6\% & — & 44.4\% & 84.4\% & 37.5\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\emph{bridge\_comparison} and \emph{comparison} show moderately useful
+gate precision (88--92\%) but significant coverage loss (32--41\%
+abstain).  \emph{compositional} is the dominant failure: 23 of 25 questions
+abstain (92\%); the 2 that are admitted are both wrong (0\% precision).
+
+% ─── 6. Analysis ──────────────────────────────────────────────────────────────
+\section{Analysis}
+\label{sec:analysis}
+
+\subsection{The Abstain Bottleneck}
+
+The gate's primary failure is not incorrect verdicts on the questions it
+admits---84.4\% precision is respectable and exceeds \armi{}'s 80.6\%
+baseline on the same subset.  The failure is that the gate refuses to admit
+most questions.  Of the 40 abstentions, the dominant reason is that the
+formaliser either produces no parseable JSON (\texttt{PARSE\_FAIL}) or an
+empty step list (\texttt{EMPTY\_STEPS}) for question types it was not
+designed for.
+
+This is a known failure mode in neurosymbolic systems: the
+formalisation step is itself an LLM generation, subject to all the
+fragilities of sequence generation, and the gate is binary (admit or
+abstain)---there is no soft fallback.
+
+\subsection{Coverage--Risk Tradeoff}
+
+Figure~\ref{fig:riskcoverage} plots the two arms in coverage--risk space.
+\armii{} achieves a marginal risk reduction ($-3.8$ pp: from 19.4\% to
+15.6\%) at the cost of a large coverage reduction ($-55.6$ pp: from 100\%
+to 44.4\%).  For a full-coverage QA system, this tradeoff is not worthwhile.
+An abstaining system that covers only 44\% of queries cannot replace a
+general-purpose CoT system.
+
+\begin{figure}[h]
+\centering
+% \includegraphics[width=0.5\textwidth]{figures/risk_coverage.pdf}
+\framebox[0.5\textwidth]{\parbox{0.49\textwidth}{\centering\vspace{20pt}
+  [Figure 4: Coverage--Risk scatter]\vspace{20pt}}}
+\caption{Coverage--risk tradeoff. Arm~0 (blue circle): coverage=100\%,
+  risk=19.4\%. Arm~2 (amber circle): coverage=44.4\%, risk=15.6\%.
+  The gate gains $-3.8$ pp risk at the cost of $-55.6$ pp coverage.}
+\label{fig:riskcoverage}
+\end{figure}
+
+\subsection{Compositional Type: Total Gate Failure}
+
+The \emph{compositional} type (questions requiring multi-step chains not
+directly supported by a single operator) completely defeats the gate.
+The formaliser was trained primarily on \emph{bridge\_comparison}
+examples---a natural-language inference pattern where two entity
+attributes are compared.  Compositional questions require chaining
+\texttt{conjoin} with \texttt{arithmetic} or \texttt{temporal\_order}
+in ways not covered by the few-shot examples, leading to nearly universal
+parse failure.
+
+This confirms a key limitation of few-shot formalisation: coverage is
+only as broad as the example distribution.
+
+\subsection{Mode A vs.\ Mode B}
+
+An earlier internal study (\emph{Mode~A}, formalization-only, no QA
+grounding) used a 92\% bridge\_comparison sample, inflating gate
+performance estimates.  The formal G3 experiment (\emph{Mode~B}) samples
+the full decomposable distribution and finds only 68\% bridge\_comparison.
+The discrepancy accounts for most of the observed coverage decline from
+internal estimates to the formal result, and underscores the importance of
+representative sampling in pilot studies.
+
+% ─── 7. Discussion ────────────────────────────────────────────────────────────
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Why Hard Gates Fail on Generated Formalisms}
+
+The fundamental tension is between two requirements that pull in opposite
+directions.  A hard gate needs a \emph{reliable formaliser}: if the
+formaliser often fails to produce a valid schema, most questions abstain and
+coverage collapses.  But a reliable formaliser on natural-language multi-hop
+questions---which may involve arbitrary cultural, temporal, geographic, or
+numeric reasoning---requires either a very large model (reducing the
+efficiency argument) or a very constrained question type (reducing generality).
+
+Neurosymbolic successes (Logic-LM, SatLM, LINC) mostly operate in domains
+with well-defined, well-modelled logical structure: arithmetic word problems,
+formal proofs, boardgame rules.  Multi-hop QA from Wikipedia spans informal,
+compositional, culturally-specific reasoning for which no clean symbolic
+vocabulary exists.
+
+\subsection{The Role of Error Correlation}
+
+Both arms derive from the same Qwen2.5-14B model family.  As
+\citet{correlatedErrors} and \citet{llmsJury} document, models in the same
+family make correlated errors; the \mcnem{} concordance table (25 both-right,
+1 both-wrong, $n{=}32$) is consistent with this.  A gate built on a diverse,
+independent verifier might see fewer concordant-correct cells and more
+discordant gains, potentially improving the \mcnem{} outcome.  However,
+the dominant failure---abstention, not wrong admission---is structural
+and cannot be addressed by reducing error correlation alone.
+
+\subsection{When Could a Gate Help?}
+
+Based on our results, a typed gate is likely to help when:
+\begin{enumerate}[leftmargin=*,noitemsep]
+  \item The question type is \emph{predictable} and covered by the formaliser's
+    training distribution (our bridge\_comparison and comparison results hint at
+    this: 88--92\% precision when admitted).
+  \item An \emph{abstain} outcome is acceptable (selective QA, human-in-the-loop).
+  \item The formaliser is a much larger or more capable model than the answerer.
+\end{enumerate}
+
+For general-coverage QA systems, the evidence suggests that a soft verifier
+(a learned scoring model) or a cascade approach
+(gate $\rightarrow$ fallback to CoT on abstain) would better preserve coverage.
+
+% ─── 8. Limitations ───────────────────────────────────────────────────────────
+\section{Limitations}
+\label{sec:limitations}
+
+\paragraph{Sample size.}  $n{=}72$ is modest; the \mcnem{} test has limited
+power, and the per-type cells ($n \in \{22, 25\}$) are too small for
+subgroup inference.
+
+\paragraph{Single model family.}  Both arms use Qwen2.5-14B or related
+variants.  Results may differ with a larger or more diverse formaliser.
+
+\paragraph{Manual scoring.}  Scores were assigned by a single annotator.
+Inter-annotator agreement was not measured.
+
+\paragraph{Preregistration scope.}  The preregistration was internal
+(\texttt{PREREG.md} in the project repository), not filed with an external
+registry.  The \mcnem{} primary metric and $+15$ pp threshold were locked
+before runs, but the §7 SVSS kill rule was added after G2 based on
+observed failure modes.
+
+\paragraph{Operator coverage.}  The four operators were chosen for the
+decomposable subset; other question types (bridge-only, single-hop) are
+not evaluated.  The 92\% abstain rate on compositional questions likely
+reflects a systematic gap rather than random formaliser error.
+
+\paragraph{No cascade baseline.}  We do not evaluate a gate+fallback
+(CoT when gate abstains) design.  The paper measures the gate in isolation;
+a cascade might recover coverage at some precision cost.
+
+% ─── 9. Conclusion ────────────────────────────────────────────────────────────
+\section{Conclusion}
+\label{sec:conclusion}
+
+We find that a typed-operator gate does not improve on direct
+chain-of-thought generation on 2WikiMultihopQA decomposable questions.
+The gate's precision is competitive (84.4\%) on the questions it admits,
+but it abstains on 56\% of questions, collapsing full-coverage accuracy
+from 80.6\% to 37.5\%.  The \mcnem{} test is non-significant
+($\chi^2(1) = 0.667$, $p = 0.41$), failing both required promotion criteria.
+
+The failure is predominantly an abstain bottleneck, driven by the gap
+between the formaliser's training distribution (bridge\_comparison-heavy)
+and the full decomposable question distribution (including compositional
+types).  For general-coverage multi-hop QA, the evidence favours softer
+verification or cascade designs over hard binary gates.
+
+The \latch{} pilot provides a negative-result baseline for future
+neurosymbolic multi-hop QA systems on 2WikiMultihopQA, and demonstrates
+that a preregistered pilot protocol can efficiently kill unpromising
+designs without large-scale compute.
+
+% ─── Acknowledgements ─────────────────────────────────────────────────────────
+\section*{Acknowledgements}
+
+The 2WikiMultihopQA dataset is released under the Apache~2.0 license by
+\citet{2wikimultihopqa}.  Experiments were run locally on consumer hardware
+(NVIDIA RTX 3090) using Ollama and the publicly available Qwen2.5-14B
+weights.
+
+% ─── References ───────────────────────────────────────────────────────────────
+\bibliographystyle{plainnat}
+\bibliography{paper}
+
+\end{document}
